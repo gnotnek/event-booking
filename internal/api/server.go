@@ -3,6 +3,8 @@ package api
 import (
 	"context"
 	"errors"
+	"event-booking/internal/account"
+	"event-booking/internal/auth"
 	"event-booking/internal/config"
 	"event-booking/internal/postgres"
 	"fmt"
@@ -21,8 +23,17 @@ func NewServer() *Server {
 	db := postgres.NewGORM(&cfg.Database)
 	postgres.Migrate(db)
 
+	jwt := auth.NewJwtService(cfg.App.SecretKey)
+
+	// Account
+	accountRepo := account.NewRepository(db)
+	accountSvc := account.NewService(accountRepo)
+	accountHandler := account.NewHttpHandler(accountSvc, jwt)
+
 	app := fiber.New()
 
+	app.Post("/api/signup", accountHandler.SignUpUserHandler)
+	app.Post("/api/signin", accountHandler.SignInUserHandler)
 	return &Server{fiber: app}
 }
 

@@ -23,6 +23,7 @@ type Config struct {
 
 type App struct {
 	SecretKey string `env:"APP_SECRET"`
+	JwtKey    string `env:"JWT_SECRET_KEY"`
 }
 
 type Database struct {
