@@ -3,6 +3,7 @@ package account
 import (
 	"event-booking/internal/auth"
 	"event-booking/internal/entity"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -36,7 +37,10 @@ func (h *httpHandler) SignUpUserHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(user)
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
+		"message": "User created successfully",
+		"user":    user,
+	})
 }
 
 func (h *httpHandler) SignInUserHandler(c *fiber.Ctx) error {
@@ -64,8 +68,14 @@ func (h *httpHandler) SignInUserHandler(c *fiber.Ctx) error {
 		})
 	}
 
+	c.Cookie(&fiber.Cookie{
+		Name:    "jwt",
+		Value:   token,
+		Expires: time.Now().Add(time.Hour * 24),
+	})
+
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"token": token,
-		"user":  user,
+		"message": "User signed in successfully",
+		"user":    user,
 	})
 }
