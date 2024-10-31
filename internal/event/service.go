@@ -21,21 +21,46 @@ func NewService(repo Repository) *Service {
 }
 
 func (s *Service) CreateEventService(event *entity.Event) (*entity.Event, error) {
-	return s.repo.Create(event)
+	event, err := s.repo.Create(event)
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
 }
 
 func (s *Service) SaveEventService(event *entity.Event) (*entity.Event, error) {
-	return s.repo.Save(event)
+	event, err := s.repo.Save(event)
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
 }
 
 func (s *Service) FindAllEventService() ([]entity.Event, error) {
-	return s.repo.FindAll()
+	events, err := s.repo.FindAll()
+	if err != nil {
+		return nil, err
+	}
+
+	return events, nil
 }
 
 func (s *Service) FindEventService(id string) (*entity.Event, error) {
-	return s.repo.Find(id)
+	event, err := s.repo.Find(id)
+	if err != nil {
+		return nil, err
+	}
+
+	return event, nil
 }
 
 func (s *Service) DeleteEventService(id string) error {
-	return s.repo.Delete(id)
+	err := s.repo.Delete(id)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
