@@ -3,7 +3,6 @@ package event
 import (
 	"event-booking/internal/entity"
 
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -42,7 +41,7 @@ func (r *repo) FindAll() ([]entity.Event, error) {
 	return events, nil
 }
 
-func (r *repo) Find(id uuid.UUID) (*entity.Event, error) {
+func (r *repo) Find(id string) (*entity.Event, error) {
 	var event entity.Event
 	if err := r.db.Where("id = ?", id).First(&event).Error; err != nil {
 		return nil, err
@@ -51,7 +50,7 @@ func (r *repo) Find(id uuid.UUID) (*entity.Event, error) {
 	return &event, nil
 }
 
-func (r *repo) Delete(id uuid.UUID) error {
+func (r *repo) Delete(id string) error {
 	if err := r.db.Where("id = ?", id).Delete(&entity.Event{}).Error; err != nil {
 		return err
 	}

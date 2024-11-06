@@ -3,6 +3,7 @@ package auth
 import (
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/google/uuid"
 )
@@ -38,18 +39,27 @@ func (j *JwtService) CreateToken(userID uuid.UUID) (string, error) {
 	return token.SignedString([]byte(j.jwtKey))
 }
 
-func (j *JwtService) ValidateToken(tokenString string) (*claims, error) {
+func (j *JwtService) ValidateToken(tokenString string) error {
 	token, err := jwt.ParseWithClaims(tokenString, &claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(j.jwtKey), nil
 	})
 	if err != nil {
-		return nil, err
+		return nil
 	}
 
-	claims, ok := token.Claims.(*claims)
+	_, ok := token.Claims.(*claims)
 	if !ok || !token.Valid {
-		return nil, jwt.ErrSignatureInvalid
+		return err
 	}
 
-	return claims, nil
+	return nil
+}
+
+func (j *JwtService) AuthRequired(c *fiber.Ctx) error {
+	err := j.ValidateToken(c.Get("Authorization")[7:])
+	if err != nil {
+		return c.Status(fiber.StatusUnauthorized).SendString("Unauthorized")
+	}
+
+	return nil
 }

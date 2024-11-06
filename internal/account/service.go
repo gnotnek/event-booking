@@ -3,6 +3,7 @@ package account
 import (
 	"event-booking/internal/entity"
 
+	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -24,6 +25,7 @@ func NewService(repo Repository) *Service {
 func (s *Service) SignUpUserService(user *entity.User) (*entity.User, error) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return nil, err
 	}
 
@@ -35,11 +37,13 @@ func (s *Service) SignUpUserService(user *entity.User) (*entity.User, error) {
 func (s *Service) SignInUserService(user *entity.User) (*entity.User, error) {
 	userDB, err := s.repo.FindByEmail(user.Email)
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return nil, err
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(userDB.Password), []byte(user.Password))
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return nil, err
 	}
 

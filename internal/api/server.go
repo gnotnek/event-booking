@@ -6,6 +6,7 @@ import (
 	"event-booking/internal/account"
 	"event-booking/internal/auth"
 	"event-booking/internal/config"
+	"event-booking/internal/event"
 	"event-booking/internal/postgres"
 	"fmt"
 	"os"
@@ -30,10 +31,22 @@ func NewServer() *Server {
 	accountSvc := account.NewService(accountRepo)
 	accountHandler := account.NewHttpHandler(accountSvc, jwt)
 
+	// Event
+	eventRepo := event.NewRepository(db)
+	eventSvc := event.NewService(eventRepo)
+	eventHandler := event.NewHttpHandler(eventSvc)
+
 	app := fiber.New()
 
 	app.Post("/api/signup", accountHandler.SignUpUserHandler)
 	app.Post("/api/signin", accountHandler.SignInUserHandler)
+
+	app.Post("/api/event", jwt.AuthRequired, eventHandler.CreateEventHandler)
+	app.Get("/api/event", jwt.AuthRequired, eventHandler.FindAllEventHandler)
+	app.Get("/api/event/:id", jwt.AuthRequired, eventHandler.FindEventHandler)
+	app.Put("/api/event/:id", jwt.AuthRequired, eventHandler.SaveEventHandler)
+	app.Delete("/api/event/:id", jwt.AuthRequired, eventHandler.DeleteEventHandler)
+
 	return &Server{fiber: app}
 }
 

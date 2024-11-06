@@ -1,6 +1,10 @@
 package event
 
-import "event-booking/internal/entity"
+import (
+	"event-booking/internal/entity"
+
+	"github.com/rs/zerolog/log"
+)
 
 type Repository interface {
 	Create(event *entity.Event) (*entity.Event, error)
@@ -23,6 +27,7 @@ func NewService(repo Repository) *Service {
 func (s *Service) CreateEventService(event *entity.Event) (*entity.Event, error) {
 	event, err := s.repo.Create(event)
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return nil, err
 	}
 
@@ -32,6 +37,7 @@ func (s *Service) CreateEventService(event *entity.Event) (*entity.Event, error)
 func (s *Service) SaveEventService(event *entity.Event) (*entity.Event, error) {
 	event, err := s.repo.Save(event)
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return nil, err
 	}
 
@@ -41,6 +47,7 @@ func (s *Service) SaveEventService(event *entity.Event) (*entity.Event, error) {
 func (s *Service) FindAllEventService() ([]entity.Event, error) {
 	events, err := s.repo.FindAll()
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return nil, err
 	}
 
@@ -50,6 +57,7 @@ func (s *Service) FindAllEventService() ([]entity.Event, error) {
 func (s *Service) FindEventService(id string) (*entity.Event, error) {
 	event, err := s.repo.Find(id)
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return nil, err
 	}
 
@@ -59,6 +67,7 @@ func (s *Service) FindEventService(id string) (*entity.Event, error) {
 func (s *Service) DeleteEventService(id string) error {
 	err := s.repo.Delete(id)
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return err
 	}
 
