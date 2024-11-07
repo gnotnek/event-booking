@@ -12,8 +12,8 @@ type Event struct {
 	Description string    `json:"description"`
 	Location    string    `json:"location"`
 	Date        time.Time `json:"date"`
-	Kouta       int       `json:"available"`
+	Quota       int       `json:"quota"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
-	Booking     []Booking `json:"booking"`
+	Bookings    []Booking `json:"bookings" gorm:"many2many:booking_events;"`
 }
