@@ -7,6 +7,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// go generate mockery -name Repository
 type Repository interface {
 	CreateAccount(user *entity.User) (*entity.User, error)
 	FindByEmail(email string) (*entity.User, error)

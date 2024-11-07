@@ -5,6 +5,7 @@ import (
 	"errors"
 	"event-booking/internal/account"
 	"event-booking/internal/auth"
+	"event-booking/internal/booking"
 	"event-booking/internal/config"
 	"event-booking/internal/event"
 	"event-booking/internal/postgres"
@@ -36,16 +37,30 @@ func NewServer() *Server {
 	eventSvc := event.NewService(eventRepo)
 	eventHandler := event.NewHttpHandler(eventSvc)
 
+	// Booking
+	bookingRepo := booking.NewRepository(db)
+	bookingSvc := booking.NewService(bookingRepo)
+	bookingHandler := booking.NewHttpHandler(bookingSvc)
+
 	app := fiber.New()
 
+	// Account routes
 	app.Post("/api/signup", accountHandler.SignUpUserHandler)
 	app.Post("/api/signin", accountHandler.SignInUserHandler)
 
+	// Event routes
 	app.Post("/api/event", jwt.AuthRequired, eventHandler.CreateEventHandler)
 	app.Get("/api/event", jwt.AuthRequired, eventHandler.FindAllEventHandler)
 	app.Get("/api/event/:id", jwt.AuthRequired, eventHandler.FindEventHandler)
 	app.Put("/api/event/:id", jwt.AuthRequired, eventHandler.SaveEventHandler)
 	app.Delete("/api/event/:id", jwt.AuthRequired, eventHandler.DeleteEventHandler)
+
+	// Booking routes
+	app.Post("/api/booking", jwt.AuthRequired, bookingHandler.BookEventHandler)
+	app.Get("/api/booking", jwt.AuthRequired, bookingHandler.GetBookedEventsHandler)
+	app.Get("/api/booking/:id", jwt.AuthRequired, bookingHandler.GetBookedEventByIDHandler)
+	app.Delete("/api/booking/:id", jwt.AuthRequired, bookingHandler.CancelBookedEventHandler)
+	app.Put("/api/booking/:id", jwt.AuthRequired, bookingHandler.UpdateBookedEventHandler)
 
 	return &Server{fiber: app}
 }

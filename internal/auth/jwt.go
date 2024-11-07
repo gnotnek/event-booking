@@ -56,7 +56,7 @@ func (j *JwtService) ValidateToken(tokenString string) error {
 }
 
 func (j *JwtService) AuthRequired(c *fiber.Ctx) error {
-	err := j.ValidateToken(c.Get("Authorization")[7:])
+	err := j.ValidateToken(c.Cookies("jwt"))
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).SendString("Unauthorized")
 	}
