@@ -7,7 +7,7 @@ import (
 )
 
 type Event struct {
-	ID          uuid.UUID `json:"id"`
+	ID          uuid.UUID `json:"id" gorm:"type:uuid;primary_key;"`
 	Title       string    `json:"title"`
 	Description string    `json:"description"`
 	Location    string    `json:"location"`

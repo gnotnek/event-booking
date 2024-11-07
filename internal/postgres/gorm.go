@@ -10,18 +10,18 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func NewGORM(c *config.Database) *gorm.DB {
+func NewGORM(c config.Database) *gorm.DB {
 	db, err := gorm.Open(postgres.Open(c.DataSourceName()), &gorm.Config{
-		Logger: logger.Default.LogMode(logger.Info),
+		Logger: logger.Default.LogMode(logger.Silent),
 	})
 
 	if err != nil {
-		log.Fatal().Err(err).Msg("could not connect to the database")
+		log.Fatal().Msgf("failed to opening db conn: %s", err.Error())
 	}
 
 	sqlDB, err := db.DB()
 	if err != nil {
-		log.Fatal().Err(err).Msg("could not get database connection")
+		log.Fatal().Msgf("failed to get db object: %s", err.Error())
 	}
 
 	sqlDB.SetMaxIdleConns(10)

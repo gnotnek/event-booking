@@ -22,7 +22,7 @@ import (
 func NewServer() *Server {
 	cfg := config.Load()
 
-	db := postgres.NewGORM(&cfg.Database)
+	db := postgres.NewGORM(cfg.Database)
 	postgres.Migrate(db)
 
 	jwt := auth.NewJwtService(cfg.App.SecretKey)
