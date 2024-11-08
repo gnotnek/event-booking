@@ -7,12 +7,12 @@ import (
 )
 
 type User struct {
-	ID        uuid.UUID `json:"id" gorm:"type:uuid;primary_key;"`
-	FirstName string    `json:"first_name"`
-	LastName  string    `json:"last_name"`
-	Email     string    `json:"email"`
-	Password  string    `json:"password"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	Booking   Booking   `json:"booking" gorm:"foreignKey:UserID"`
+	ID        uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
+	FirstName string
+	LastName  string
+	Email     string    `gorm:"unique;not null"`
+	Password  string    `gorm:"not null"`
+	Bookings  []Booking `gorm:"foreignKey:UserID;constraint:OnDelete:CASCADE;"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }

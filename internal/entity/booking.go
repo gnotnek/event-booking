@@ -7,14 +7,14 @@ import (
 )
 
 type Booking struct {
-	ID        uuid.UUID `json:"id" gorm:"type:uuid;primary_key;"`
-	UserID    uuid.UUID `json:"user_id" gorm:"type:uuid;not null;"`
-	EventID   uuid.UUID `json:"event_id" gorm:"type:uuid;not null;"`
-	Quantity  int       `json:"quantity"` // Number of tickets
-	Reference string    `json:"reference"`
-	Status    string    `json:"status"`
-	CreatedAt time.Time `json:"created_at"`
-	UpdatedAt time.Time `json:"updated_at"`
-	User      *User     `json:"user"`
-	Events    []Event   `json:"events" gorm:"many2many:booking_events;"`
+	ID        uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
+	UserID    uuid.UUID `gorm:"type:uuid;not null;constraint:OnDelete:CASCADE;"`
+	EventID   uuid.UUID `gorm:"type:uuid;not null;constraint:OnDelete:CASCADE;"`
+	Quantity  int       `gorm:"not null"` // Number of tickets
+	Reference string    `gorm:"unique;not null"`
+	Status    string
+	User      User  `gorm:"foreignKey:UserID"`
+	Event     Event `gorm:"foreignKey:EventID"`
+	CreatedAt time.Time
+	UpdatedAt time.Time
 }
