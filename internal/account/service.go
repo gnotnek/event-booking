@@ -9,7 +9,7 @@ import (
 
 // go generate mockery -name Repository
 type Repository interface {
-	CreateAccount(user *entity.User) (*entity.User, error)
+	CreateAccount(user *entity.User) error
 	FindByEmail(email string) (*entity.User, error)
 }
 
@@ -23,16 +23,22 @@ func NewService(repo Repository) *Service {
 	}
 }
 
-func (s *Service) SignUpUserService(user *entity.User) (*entity.User, error) {
+func (s *Service) SignUpUserService(user *entity.User) error {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
-		return nil, err
+		return err
 	}
 
 	user.Password = string(hashedPassword)
 
-	return s.repo.CreateAccount(user)
+	err = s.repo.CreateAccount(user)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return err
+	}
+
+	return nil
 }
 
 func (s *Service) SignInUserService(user *entity.User) (*entity.User, error) {

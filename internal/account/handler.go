@@ -20,8 +20,15 @@ func NewHttpHandler(svc *Service, jwt auth.Jwt) *httpHandler {
 	}
 }
 
+type SignUpPayload struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Role     string `json:"role" default:"user"`
+}
+
 func (h *httpHandler) SignUpUserHandler(c *fiber.Ctx) error {
-	user := new(entity.User)
+	user := new(SignUpPayload)
 	if err := c.BodyParser(user); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  fiber.StatusBadRequest,
@@ -29,7 +36,17 @@ func (h *httpHandler) SignUpUserHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	user, err := h.svc.SignUpUserService(user)
+	newUser := &entity.User{
+		Name:     user.Name,
+		Email:    user.Email,
+		Password: user.Password,
+	}
+
+	if user.Role != "" {
+		newUser.Role = user.Role
+	}
+
+	err := h.svc.SignUpUserService(newUser)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  fiber.StatusInternalServerError,
@@ -39,12 +56,17 @@ func (h *httpHandler) SignUpUserHandler(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "User created successfully",
-		"user":    user,
+		"user":    &newUser,
 	})
 }
 
+type SignInPayload struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
 func (h *httpHandler) SignInUserHandler(c *fiber.Ctx) error {
-	user := new(entity.User)
+	user := new(SignInPayload)
 	if err := c.BodyParser(user); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  fiber.StatusBadRequest,
@@ -52,7 +74,12 @@ func (h *httpHandler) SignInUserHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	user, err := h.svc.SignInUserService(user)
+	userEntity := &entity.User{
+		Email:    user.Email,
+		Password: user.Password,
+	}
+
+	authenticatedUser, err := h.svc.SignInUserService(userEntity)
 	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"status":  fiber.StatusUnauthorized,
@@ -60,7 +87,7 @@ func (h *httpHandler) SignInUserHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	token, err := h.jwt.CreateToken(user.ID)
+	token, err := h.jwt.CreateToken(authenticatedUser.ID, authenticatedUser.Role)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  fiber.StatusInternalServerError,
@@ -76,6 +103,6 @@ func (h *httpHandler) SignInUserHandler(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "User signed in successfully",
-		"user":    user,
+		"user":    authenticatedUser,
 	})
 }

@@ -25,12 +25,12 @@ func NewServer() *Server {
 	db := postgres.NewGORM(cfg.Database)
 	postgres.Migrate(db)
 
-	jwt := auth.NewJwtService(cfg.App.SecretKey)
+	jwtService := auth.NewJwtService(cfg.App.JwtSecretKey)
 
 	// Account
 	accountRepo := account.NewRepository(db)
 	accountSvc := account.NewService(accountRepo)
-	accountHandler := account.NewHttpHandler(accountSvc, jwt)
+	accountHandler := account.NewHttpHandler(accountSvc, jwtService)
 
 	// Event
 	eventRepo := event.NewRepository(db)
@@ -56,18 +56,19 @@ func NewServer() *Server {
 	app.Post("/api/signin", accountHandler.SignInUserHandler)
 
 	// Event routes
-	app.Post("/api/event", jwt.AuthRequired, eventHandler.CreateEventHandler)
-	app.Get("/api/event", jwt.AuthRequired, eventHandler.FindAllEventHandler)
-	app.Get("/api/event/:id", jwt.AuthRequired, eventHandler.FindEventHandler)
-	app.Put("/api/event/:id", jwt.AuthRequired, eventHandler.SaveEventHandler)
-	app.Delete("/api/event/:id", jwt.AuthRequired, eventHandler.DeleteEventHandler)
+	// there are problem on the middleware, can't get proper response
+	app.Post("/api/event", jwtService.AdminOnly, eventHandler.CreateEventHandler)
+	app.Get("/api/event", jwtService.AdminOnly, eventHandler.FindAllEventHandler)
+	app.Get("/api/event/:id", jwtService.AdminOnly, eventHandler.FindEventHandler)
+	app.Put("/api/event/:id", jwtService.AdminOnly, eventHandler.SaveEventHandler)
+	app.Delete("/api/event/:id", jwtService.AdminOnly, eventHandler.DeleteEventHandler)
 
 	// Booking routes
-	app.Post("/api/booking", jwt.AuthRequired, bookingHandler.BookEventHandler)
-	app.Get("/api/booking", jwt.AuthRequired, bookingHandler.GetBookedEventsHandler)
-	app.Get("/api/booking/:id", jwt.AuthRequired, bookingHandler.GetBookedEventByIDHandler)
-	app.Delete("/api/booking/:id", jwt.AuthRequired, bookingHandler.CancelBookedEventHandler)
-	app.Put("/api/booking/:id", jwt.AuthRequired, bookingHandler.UpdateBookedEventHandler)
+	app.Post("/api/booking", jwtService.AuthRequired, bookingHandler.BookEventHandler)
+	app.Get("/api/booking", jwtService.AuthRequired, bookingHandler.GetBookedEventsHandler)
+	app.Get("/api/booking/:id", jwtService.AuthRequired, bookingHandler.GetBookedEventByIDHandler)
+	app.Delete("/api/booking/:id", jwtService.AuthRequired, bookingHandler.CancelBookedEventHandler)
+	app.Put("/api/booking/:id", jwtService.AuthRequired, bookingHandler.UpdateBookedEventHandler)
 
 	return &Server{fiber: app}
 }

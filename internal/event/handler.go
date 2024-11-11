@@ -2,6 +2,7 @@ package event
 
 import (
 	"event-booking/internal/entity"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -16,8 +17,18 @@ func NewHttpHandler(svc *Service) *httpHandler {
 	}
 }
 
+type EventInputPayload struct {
+	Name          string    `json:"name"`
+	Location      string    `json:"location"`
+	StartDate     time.Time `json:"start_date"`
+	EndDate       time.Time `json:"end_date"`
+	Price         float64   `json:"price"`
+	TotalSeat     int       `json:"total_seat"`
+	AvailableSeat int       `json:"available_seat"`
+}
+
 func (h *httpHandler) CreateEventHandler(c *fiber.Ctx) error {
-	event := new(entity.Event)
+	event := new(EventInputPayload)
 	if err := c.BodyParser(event); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  fiber.StatusBadRequest,
@@ -25,7 +36,17 @@ func (h *httpHandler) CreateEventHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	event, err := h.svc.CreateEventService(event)
+	newEvent := &entity.Event{
+		Name:          event.Name,
+		Location:      event.Location,
+		StartDate:     event.StartDate,
+		EndDate:       event.EndDate,
+		Price:         event.Price,
+		TotalSeat:     event.TotalSeat,
+		AvailableSeat: event.AvailableSeat,
+	}
+
+	createdEvent, err := h.svc.CreateEventService(newEvent)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  fiber.StatusInternalServerError,
@@ -35,7 +56,7 @@ func (h *httpHandler) CreateEventHandler(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 		"message": "Event created successfully",
-		"event":   event,
+		"event":   createdEvent,
 	})
 }
 

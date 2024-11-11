@@ -16,12 +16,12 @@ func NewRepository(db *gorm.DB) *repo {
 	}
 }
 
-func (r *repo) CreateAccount(user *entity.User) (*entity.User, error) {
+func (r *repo) CreateAccount(user *entity.User) error {
 	if err := r.db.Create(user).Error; err != nil {
-		return nil, err
+		return err
 	}
 
-	return user, nil
+	return nil
 }
 
 func (r *repo) FindByEmail(email string) (*entity.User, error) {
