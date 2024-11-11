@@ -44,6 +44,13 @@ func NewServer() *Server {
 
 	app := fiber.New()
 
+	// Root
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON(fiber.Map{
+			"message": "Welcome to Event Booking API",
+		})
+	})
+
 	// Account routes
 	app.Post("/api/signup", accountHandler.SignUpUserHandler)
 	app.Post("/api/signin", accountHandler.SignInUserHandler)

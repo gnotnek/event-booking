@@ -7,13 +7,15 @@ import (
 )
 
 type Event struct {
-	ID          uuid.UUID `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()"`
-	Title       string    `gorm:"not null"`
-	Description string
-	Location    string
-	Date        time.Time `gorm:"not null"`
-	Quota       int       `gorm:"not null"`
-	Bookings    []Booking `gorm:"foreignKey:EventID;constraint:OnDelete:CASCADE;"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID            uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
+	Name          string    `json:"name" gorm:"not null"`
+	Location      string    `json:"location"`
+	StartDate     time.Time `json:"start_date"`
+	EndDate       time.Time `json:"end_date"`
+	Price         float64   `json:"price"`
+	TotalSeat     int       `json:"total_seat"`
+	AvailableSeat int       `json:"available_seat"`
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
+	Bookings      []Booking `gorm:"foreignKey:EventID"`
 }
