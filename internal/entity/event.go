@@ -8,7 +8,7 @@ import (
 
 type Event struct {
 	ID            uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
-	Name          string    `json:"name" gorm:"not null"`
+	Name          string    `json:"name" gorm:"unique;not null"`
 	Location      string    `json:"location"`
 	StartDate     time.Time `json:"start_date"`
 	EndDate       time.Time `json:"end_date"`

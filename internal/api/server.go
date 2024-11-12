@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/rs/zerolog/log"
 )
 
@@ -44,6 +45,10 @@ func NewServer() *Server {
 
 	app := fiber.New()
 
+	app.Use(
+		logger.New(),
+	)
+
 	// Root
 	app.Get("/", func(c *fiber.Ctx) error {
 		return c.JSON(fiber.Map{
@@ -56,12 +61,11 @@ func NewServer() *Server {
 	app.Post("/api/signin", accountHandler.SignInUserHandler)
 
 	// Event routes
-	// there are problem on the middleware, can't get proper response
-	app.Post("/api/event", jwtService.AdminOnly, eventHandler.CreateEventHandler)
-	app.Get("/api/event", jwtService.AdminOnly, eventHandler.FindAllEventHandler)
-	app.Get("/api/event/:id", jwtService.AdminOnly, eventHandler.FindEventHandler)
-	app.Put("/api/event/:id", jwtService.AdminOnly, eventHandler.SaveEventHandler)
-	app.Delete("/api/event/:id", jwtService.AdminOnly, eventHandler.DeleteEventHandler)
+	app.Post("/api/event", jwtService.AuthRequired, eventHandler.CreateEventHandler)
+	app.Get("/api/event", jwtService.AuthRequired, eventHandler.FindAllEventHandler)
+	app.Get("/api/event/:id", jwtService.AuthRequired, eventHandler.FindEventHandler)
+	app.Put("/api/event/", jwtService.AuthRequired, eventHandler.SaveEventHandler)
+	app.Delete("/api/event/:id", jwtService.AuthRequired, eventHandler.DeleteEventHandler)
 
 	// Booking routes
 	app.Post("/api/booking", jwtService.AuthRequired, bookingHandler.BookEventHandler)

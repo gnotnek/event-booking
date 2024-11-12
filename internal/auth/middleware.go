@@ -71,15 +71,21 @@ func (j *JwtService) AuthRequired(c *fiber.Ctx) error {
 	return c.Next()
 }
 
+// idk how it block the routes
+// and give improper error message
+// such as "Cannot GET /api/event"
 func (j *JwtService) AdminOnly(c *fiber.Ctx) error {
-	// Run AuthRequired to validate token and set user role
 	if err := j.AuthRequired(c); err != nil {
 		return err
 	}
 
-	// Assert role as string and check if the role is "admin"
 	role, ok := c.Locals("role").(string)
-	if !ok || role != "admin" {
+	if !ok {
+		log.Error().Msg("Role not found in token")
+		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "Role not found in token"})
+	}
+
+	if role != "admin" {
 		log.Error().Msg("Admin access only")
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "Admin access only"})
 	}

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/gorm"
 )
 
 type httpHandler struct {
@@ -114,12 +115,25 @@ func (h *httpHandler) FindEventHandler(c *fiber.Ctx) error {
 
 func (h *httpHandler) DeleteEventHandler(c *fiber.Ctx) error {
 	id := c.Params("id")
+	if id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"status":  fiber.StatusBadRequest,
+			"message": "Bad Request",
+		})
+	}
 	err := h.svc.DeleteEventService(id)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  fiber.StatusInternalServerError,
-			"message": "Internal Server Error",
-		})
+		if err.Error() == gorm.ErrRecordNotFound.Error() {
+			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+				"status":  fiber.StatusNotFound,
+				"message": "Event not found",
+			})
+		} else {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"status":  fiber.StatusInternalServerError,
+				"message": "Internal Server Error",
+			})
+		}
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
