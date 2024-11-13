@@ -40,3 +40,12 @@ func (r *repo) DeleteByEmail(email string) error {
 
 	return nil
 }
+
+func (r *repo) FindByID(id string) (*entity.User, error) {
+	user := new(entity.User)
+	if err := r.db.Where("id = ?", id).First(user).Error; err != nil {
+		return nil, err
+	}
+
+	return user, nil
+}

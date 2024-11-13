@@ -7,17 +7,17 @@ import (
 )
 
 type repo struct {
-	dg *gorm.DB
+	db *gorm.DB
 }
 
 func NewRepository(db *gorm.DB) *repo {
 	return &repo{
-		dg: db,
+		db: db,
 	}
 }
 
 func (r *repo) Create(booking *entity.Booking) (*entity.Booking, error) {
-	if err := r.dg.Create(booking).Error; err != nil {
+	if err := r.db.Create(booking).Error; err != nil {
 		return nil, err
 	}
 
@@ -25,7 +25,7 @@ func (r *repo) Create(booking *entity.Booking) (*entity.Booking, error) {
 }
 
 func (r *repo) Save(booking *entity.Booking) (*entity.Booking, error) {
-	if err := r.dg.Save(booking).Error; err != nil {
+	if err := r.db.Save(booking).Error; err != nil {
 		return nil, err
 	}
 
@@ -34,7 +34,7 @@ func (r *repo) Save(booking *entity.Booking) (*entity.Booking, error) {
 
 func (r *repo) FindAll() ([]entity.Booking, error) {
 	var bookings []entity.Booking
-	if err := r.dg.Find(&bookings).Error; err != nil {
+	if err := r.db.Find(&bookings).Error; err != nil {
 		return nil, err
 	}
 
@@ -43,7 +43,7 @@ func (r *repo) FindAll() ([]entity.Booking, error) {
 
 func (r *repo) FindByUserID(userID string) ([]entity.Booking, error) {
 	var bookings []entity.Booking
-	if err := r.dg.Where("user_id = ?", userID).Find(&bookings).Error; err != nil {
+	if err := r.db.Where("user_id = ?", userID).Find(&bookings).Error; err != nil {
 		return nil, err
 	}
 
@@ -52,7 +52,7 @@ func (r *repo) FindByUserID(userID string) ([]entity.Booking, error) {
 
 func (r *repo) FindByEventID(eventID string) ([]entity.Booking, error) {
 	var bookings []entity.Booking
-	if err := r.dg.Where("event_id = ?", eventID).Find(&bookings).Error; err != nil {
+	if err := r.db.Where("event_id = ?", eventID).Find(&bookings).Error; err != nil {
 		return nil, err
 	}
 
@@ -61,7 +61,7 @@ func (r *repo) FindByEventID(eventID string) ([]entity.Booking, error) {
 
 func (r *repo) Find(id string) (*entity.Booking, error) {
 	var booking entity.Booking
-	if err := r.dg.Where("id = ?", id).First(&booking).Error; err != nil {
+	if err := r.db.Where("id = ?", id).First(&booking).Error; err != nil {
 		return nil, err
 	}
 
@@ -69,7 +69,7 @@ func (r *repo) Find(id string) (*entity.Booking, error) {
 }
 
 func (r *repo) Delete(id string) error {
-	if err := r.dg.Where("id = ?", id).Delete(&entity.Booking{}).Error; err != nil {
+	if err := r.db.Where("id = ?", id).Delete(&entity.Booking{}).Error; err != nil {
 		return err
 	}
 

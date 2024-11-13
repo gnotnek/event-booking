@@ -1,6 +1,7 @@
 package booking
 
 import (
+	"errors"
 	"event-booking/internal/entity"
 
 	"github.com/rs/zerolog/log"
@@ -16,18 +17,37 @@ type Repository interface {
 	Delete(id string) error
 }
 
-type Service struct {
-	repo Repository
+type EventRepository interface {
+	Find(id string) (*entity.Event, error)
 }
 
-func NewService(repo Repository) *Service {
+type Service struct {
+	repo            Repository
+	eventRepository EventRepository
+}
+
+func NewService(repo Repository, eventRepository EventRepository) *Service {
 	return &Service{
-		repo: repo,
+		repo:            repo,
+		eventRepository: eventRepository,
 	}
 }
 
 func (s *Service) CreateBookingService(booking *entity.Booking) (*entity.Booking, error) {
-	booking, err := s.repo.Create(booking)
+	event, err := s.eventRepository.Find(booking.EventID.String())
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return nil, err
+	}
+
+	event.AvailableSeat -= booking.Quantity
+	if event.AvailableSeat < 0 {
+		return nil, errors.New("not enough seat available")
+	}
+
+	booking.TotalPrice = event.Price * float64(booking.Quantity)
+
+	booking, err = s.repo.Create(booking)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return nil, err

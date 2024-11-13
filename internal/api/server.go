@@ -40,7 +40,7 @@ func NewServer() *Server {
 
 	// Booking
 	bookingRepo := booking.NewRepository(db)
-	bookingSvc := booking.NewService(bookingRepo)
+	bookingSvc := booking.NewService(bookingRepo, eventRepo)
 	bookingHandler := booking.NewHttpHandler(bookingSvc)
 
 	app := fiber.New()
@@ -59,20 +59,22 @@ func NewServer() *Server {
 	// Account routes
 	app.Post("/api/signup", accountHandler.SignUpUserHandler)
 	app.Post("/api/signin", accountHandler.SignInUserHandler)
+	app.Post("/api/logout", accountHandler.SignOutUserHandler)
+	app.Get("/api/account/:id", jwtService.AuthRequired, accountHandler.GetUserByIDHandler)
 
 	// Event routes
 	app.Post("/api/event", jwtService.AuthRequired, eventHandler.CreateEventHandler)
 	app.Get("/api/event", jwtService.AuthRequired, eventHandler.FindAllEventHandler)
 	app.Get("/api/event/:id", jwtService.AuthRequired, eventHandler.FindEventHandler)
-	app.Put("/api/event/", jwtService.AuthRequired, eventHandler.SaveEventHandler)
+	app.Put("/api/event/:id", jwtService.AuthRequired, eventHandler.SaveEventHandler)
 	app.Delete("/api/event/:id", jwtService.AuthRequired, eventHandler.DeleteEventHandler)
 
 	// Booking routes
 	app.Post("/api/booking", jwtService.AuthRequired, bookingHandler.BookEventHandler)
 	app.Get("/api/booking", jwtService.AuthRequired, bookingHandler.GetBookedEventsHandler)
 	app.Get("/api/booking/:id", jwtService.AuthRequired, bookingHandler.GetBookedEventByIDHandler)
-	app.Delete("/api/booking/:id", jwtService.AuthRequired, bookingHandler.CancelBookedEventHandler)
 	app.Put("/api/booking/:id", jwtService.AuthRequired, bookingHandler.UpdateBookedEventHandler)
+	app.Delete("/api/booking/:id", jwtService.AuthRequired, bookingHandler.CancelBookedEventHandler)
 
 	return &Server{fiber: app}
 }

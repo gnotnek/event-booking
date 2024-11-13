@@ -35,7 +35,15 @@ func (s *Service) CreateEventService(event *entity.Event) (*entity.Event, error)
 	return event, nil
 }
 
-func (s *Service) SaveEventService(event *entity.Event) (*entity.Event, error) {
+func (s *Service) SaveEventService(event *entity.Event, newEvent *EventUpdatePayload) (*entity.Event, error) {
+	event.Name = newEvent.Name
+	event.Location = newEvent.Location
+	event.StartDate = newEvent.StartDate
+	event.EndDate = newEvent.EndDate
+	event.Price = newEvent.Price
+	event.TotalSeat = newEvent.TotalSeat
+	event.AvailableSeat = newEvent.AvailableSeat
+
 	event, err := s.repo.Save(event)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())

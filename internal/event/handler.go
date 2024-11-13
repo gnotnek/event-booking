@@ -61,8 +61,19 @@ func (h *httpHandler) CreateEventHandler(c *fiber.Ctx) error {
 	})
 }
 
+type EventUpdatePayload struct {
+	Name          string    `json:"name"`
+	Location      string    `json:"location"`
+	StartDate     time.Time `json:"start_date"`
+	EndDate       time.Time `json:"end_date"`
+	Price         float64   `json:"price"`
+	TotalSeat     int       `json:"total_seat"`
+	AvailableSeat int       `json:"available_seat"`
+}
+
 func (h *httpHandler) SaveEventHandler(c *fiber.Ctx) error {
-	event := new(entity.Event)
+	id := c.Params("id")
+	event := new(EventUpdatePayload)
 	if err := c.BodyParser(event); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"status":  fiber.StatusBadRequest,
@@ -70,7 +81,15 @@ func (h *httpHandler) SaveEventHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	event, err := h.svc.SaveEventService(event)
+	eventData, err := h.svc.FindEventService(id)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"status":  fiber.StatusNotFound,
+			"message": "Event not found",
+		})
+	}
+
+	newEvent, err := h.svc.SaveEventService(eventData, event)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"status":  fiber.StatusInternalServerError,
@@ -80,7 +99,7 @@ func (h *httpHandler) SaveEventHandler(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Event updated successfully",
-		"event":   event,
+		"event":   newEvent,
 	})
 }
 

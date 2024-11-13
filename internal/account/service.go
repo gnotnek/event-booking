@@ -11,6 +11,7 @@ import (
 type Repository interface {
 	CreateAccount(user *entity.User) error
 	FindByEmail(email string) (*entity.User, error)
+	FindByID(id string) (*entity.User, error)
 }
 
 type Service struct {
@@ -55,4 +56,14 @@ func (s *Service) SignInUserService(user *entity.User) (*entity.User, error) {
 	}
 
 	return userDB, nil
+}
+
+func (s *Service) FindByIDService(id string) (*entity.User, error) {
+	user, err := s.repo.FindByID(id)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return nil, err
+	}
+
+	return user, nil
 }

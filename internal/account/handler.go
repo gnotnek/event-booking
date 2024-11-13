@@ -106,3 +106,32 @@ func (h *httpHandler) SignInUserHandler(c *fiber.Ctx) error {
 		"user":    authenticatedUser,
 	})
 }
+
+func (h *httpHandler) SignOutUserHandler(c *fiber.Ctx) error {
+	c.Cookie(&fiber.Cookie{
+		Name:    "jwt",
+		Value:   "",
+		Expires: time.Now().Add(-time.Hour),
+	})
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "User signed out successfully",
+	})
+}
+
+func (h *httpHandler) GetUserByIDHandler(c *fiber.Ctx) error {
+	userID := c.Params("id")
+
+	user, err := h.svc.FindByIDService(userID)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"status":  fiber.StatusNotFound,
+			"message": "User not found",
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"message": "User found",
+		"user":    user,
+	})
+}

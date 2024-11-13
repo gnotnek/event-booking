@@ -51,7 +51,8 @@ func (r *repo) Find(id string) (*entity.Event, error) {
 }
 
 func (r *repo) Delete(id string) error {
-	if err := r.db.Where("id = ?", id).Delete(&entity.Event{}).Error; err != nil {
+	err := r.db.Where("id = ?", id).First(&entity.Event{}).Delete(&entity.Event{}).Error
+	if err != nil {
 		return err
 	}
 
