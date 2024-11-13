@@ -34,7 +34,7 @@ func (r *repo) Save(booking *entity.Booking) (*entity.Booking, error) {
 
 func (r *repo) FindAll() ([]entity.Booking, error) {
 	var bookings []entity.Booking
-	if err := r.db.Find(&bookings).Error; err != nil {
+	if err := r.db.Model(&entity.Booking{}).Preload("Event").Preload("User").Find(&bookings).Error; err != nil {
 		return nil, err
 	}
 
@@ -52,7 +52,7 @@ func (r *repo) FindByUserID(userID string) ([]entity.Booking, error) {
 
 func (r *repo) FindByEventID(eventID string) ([]entity.Booking, error) {
 	var bookings []entity.Booking
-	if err := r.db.Where("event_id = ?", eventID).Find(&bookings).Error; err != nil {
+	if err := r.db.Model(&entity.Booking{}).Preload("Event").Preload("User").Where("event_id = ?", eventID).Find(&bookings).Error; err != nil {
 		return nil, err
 	}
 
@@ -60,12 +60,12 @@ func (r *repo) FindByEventID(eventID string) ([]entity.Booking, error) {
 }
 
 func (r *repo) Find(id string) (*entity.Booking, error) {
-	var booking entity.Booking
-	if err := r.db.Where("id = ?", id).First(&booking).Error; err != nil {
+	booking := new(entity.Booking)
+	if err := r.db.Where("id = ?", id).Preload("Event").Preload("User").First(booking).Error; err != nil {
 		return nil, err
 	}
 
-	return &booking, nil
+	return booking, nil
 }
 
 func (r *repo) Delete(id string) error {

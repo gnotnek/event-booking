@@ -19,6 +19,7 @@ type Repository interface {
 
 type EventRepository interface {
 	Find(id string) (*entity.Event, error)
+	Save(event *entity.Event) (*entity.Event, error)
 }
 
 type Service struct {
@@ -48,6 +49,12 @@ func (s *Service) CreateBookingService(booking *entity.Booking) (*entity.Booking
 	booking.TotalPrice = event.Price * float64(booking.Quantity)
 
 	booking, err = s.repo.Create(booking)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return nil, err
+	}
+
+	_, err = s.eventRepository.Save(event)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return nil, err
@@ -106,8 +113,22 @@ func (s *Service) FindBookingService(id string) (*entity.Booking, error) {
 	return booking, nil
 }
 
-func (s *Service) DeleteBookingService(id string) error {
-	err := s.repo.Delete(id)
+func (s *Service) DeleteBookingService(id string, book *entity.Booking) error {
+	event, err := s.eventRepository.Find(book.EventID.String())
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return err
+	}
+
+	event.AvailableSeat += book.Quantity
+
+	err = s.repo.Delete(id)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return err
+	}
+
+	_, err = s.eventRepository.Save(event)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return err

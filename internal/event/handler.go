@@ -61,6 +61,17 @@ func (h *httpHandler) CreateEventHandler(c *fiber.Ctx) error {
 	})
 }
 
+type EventResponsePayload struct {
+	ID            string    `json:"id"`
+	Name          string    `json:"name"`
+	Location      string    `json:"location"`
+	StartDate     time.Time `json:"start_date"`
+	EndDate       time.Time `json:"end_date"`
+	Price         float64   `json:"price"`
+	TotalSeat     int       `json:"total_seat"`
+	AvailableSeat int       `json:"available_seat"`
+}
+
 type EventUpdatePayload struct {
 	Name          string    `json:"name"`
 	Location      string    `json:"location"`
@@ -99,7 +110,16 @@ func (h *httpHandler) SaveEventHandler(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"message": "Event updated successfully",
-		"event":   newEvent,
+		"event": EventResponsePayload{
+			ID:            newEvent.ID.String(),
+			Name:          newEvent.Name,
+			Location:      newEvent.Location,
+			StartDate:     newEvent.StartDate,
+			EndDate:       newEvent.EndDate,
+			Price:         newEvent.Price,
+			TotalSeat:     newEvent.TotalSeat,
+			AvailableSeat: newEvent.AvailableSeat,
+		},
 	})
 }
 
@@ -128,7 +148,16 @@ func (h *httpHandler) FindEventHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"event": event,
+		"event": EventResponsePayload{
+			ID:            event.ID.String(),
+			Name:          event.Name,
+			Location:      event.Location,
+			StartDate:     event.StartDate,
+			EndDate:       event.EndDate,
+			Price:         event.Price,
+			TotalSeat:     event.TotalSeat,
+			AvailableSeat: event.AvailableSeat,
+		},
 	})
 }
 
