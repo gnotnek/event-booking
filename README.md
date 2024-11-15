@@ -1,7 +1,7 @@
 # Event Booking System
 
 ## Overview
-This project is an Event Booking System built with Golang. It allows users to browse, book, and manage event reservations.
+This project is an Event Booking System built with Golang. It allows users to browse, book, and manage event reservations. Its written using onion infrastructure
 
 ## Features
 - User registration and authentication
