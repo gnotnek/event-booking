@@ -8,6 +8,7 @@ import (
 	"event-booking/internal/booking"
 	"event-booking/internal/config"
 	"event-booking/internal/event"
+	"event-booking/internal/health"
 	"event-booking/internal/postgres"
 	"fmt"
 	"os"
@@ -27,6 +28,11 @@ func NewServer() *Server {
 	postgres.Migrate(db)
 
 	jwtService := auth.NewJwtService(cfg.App.JwtSecretKey)
+
+	// Health
+	healthRepo := health.NewRepository(db)
+	healthSvc := health.NewService(healthRepo)
+	healthHandler := health.NewHttpHandler(healthSvc)
 
 	// Account
 	accountRepo := account.NewRepository(db)
@@ -55,6 +61,9 @@ func NewServer() *Server {
 			"message": "Welcome to Event Booking API",
 		})
 	})
+
+	// Health routes
+	app.Get("/health", healthHandler.HealthCheck)
 
 	// Account routes
 	app.Post("/api/signup", accountHandler.SignUpUserHandler)
