@@ -1,7 +1,7 @@
 .PHONY: tidy
 tidy:
 	go fmt ./...
-	go mod tidy
+	go mod tidy -v
 
 .PHONY: build
 build:
@@ -21,9 +21,8 @@ run/live:
 
 .PHONY: test
 test:
-	go test -race -coverprofile=/tmp/coverage.out ./...
+	go test -race -coverprofile="coverage.out" ./...
 
 .PHONY: generate
 generate:
 	go generate ./...
-	

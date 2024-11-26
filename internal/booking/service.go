@@ -7,7 +7,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// go generate mockery -name Repository
+//go:generate mockery --case snake --name Repository
 type Repository interface {
 	Create(booking *entity.Booking) (*entity.Booking, error)
 	Save(booking *entity.Booking) (*entity.Booking, error)
@@ -18,7 +18,7 @@ type Repository interface {
 	Delete(id string) error
 }
 
-// go generate mockery -name EventRepository
+//go:generate mockery --case snake --name EventRepository
 type EventRepository interface {
 	Find(id string) (*entity.Event, error)
 	Save(event *entity.Event) (*entity.Event, error)

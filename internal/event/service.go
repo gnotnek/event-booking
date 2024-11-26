@@ -6,7 +6,7 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-// go generate mockery -name Repository
+//go:generate mockery --case snake --name Repository
 type Repository interface {
 	Create(event *entity.Event) (*entity.Event, error)
 	Save(event *entity.Event) (*entity.Event, error)
