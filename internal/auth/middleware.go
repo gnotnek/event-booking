@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -84,6 +85,8 @@ func (j *JwtService) AdminOnly(c *fiber.Ctx) error {
 		log.Error().Msg("Role not found in token")
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "Role not found in token"})
 	}
+
+	fmt.Println(role)
 
 	if role != "admin" {
 		log.Error().Msg("Admin access only")

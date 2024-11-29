@@ -71,6 +71,13 @@ func NewServer() *Server {
 	app.Post("/api/logout", accountHandler.SignOutUserHandler)
 	app.Get("/api/account/:id", jwtService.AuthRequired, accountHandler.GetUserByIDHandler)
 
+	// Event Admin routes
+	app.Post("/api/admin/event", jwtService.AdminOnly, eventHandler.CreateEventHandler)
+	app.Get("/api/admin/event", jwtService.AdminOnly, eventHandler.FindAllEventHandler)
+	app.Get("/api/admin/event/:id", jwtService.AdminOnly, eventHandler.FindEventHandler)
+	app.Put("/api/admin/event/:id", jwtService.AdminOnly, eventHandler.SaveEventHandler)
+	app.Delete("/api/admin/event/:id", jwtService.AdminOnly, eventHandler.DeleteEventHandler)
+
 	// Event routes
 	app.Post("/api/event", jwtService.AuthRequired, eventHandler.CreateEventHandler)
 	app.Get("/api/event", jwtService.AuthRequired, eventHandler.FindAllEventHandler)

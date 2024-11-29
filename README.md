@@ -49,7 +49,7 @@ Contributions are welcome! Please fork the repository and create a pull request.
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ## Contact
-For any inquiries, please contact [your email](mailto:youremail@example.com).
+For any inquiries, please contact [me](mailto:dhistadna@gmail.com).
 
 ## Building the Application
 To build the application, follow these steps:
