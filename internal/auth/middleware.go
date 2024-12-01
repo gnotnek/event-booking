@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,19 +9,19 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-type Jwt interface {
+type Auth interface {
 	CreateToken(userID uuid.UUID, role string) (string, error)
 	ValidateToken(tokenString string) (*claims, error)
 	AuthRequired(c *fiber.Ctx) error
-	AdminOnly(c *fiber.Ctx) error
+	AdminRequired(c *fiber.Ctx) error
 }
 
-type JwtService struct {
+type AuthService struct {
 	jwtKey string
 }
 
-func NewJwtService(jwtKey string) *JwtService {
-	return &JwtService{jwtKey: jwtKey}
+func NewAuthService(jwtKey string) *AuthService {
+	return &AuthService{jwtKey: jwtKey}
 }
 
 type claims struct {
@@ -31,7 +30,7 @@ type claims struct {
 	jwt.RegisteredClaims
 }
 
-func (j *JwtService) CreateToken(userID uuid.UUID, role string) (string, error) {
+func (j *AuthService) CreateToken(userID uuid.UUID, role string) (string, error) {
 	claims := claims{
 		UserID: userID.String(),
 		Role:   role,
@@ -44,7 +43,7 @@ func (j *JwtService) CreateToken(userID uuid.UUID, role string) (string, error) 
 	return token.SignedString([]byte(j.jwtKey))
 }
 
-func (j *JwtService) ValidateToken(tokenString string) (*claims, error) {
+func (j *AuthService) ValidateToken(tokenString string) (*claims, error) {
 	token, err := jwt.ParseWithClaims(tokenString, &claims{}, func(token *jwt.Token) (interface{}, error) {
 		return []byte(j.jwtKey), nil
 	})
@@ -60,38 +59,57 @@ func (j *JwtService) ValidateToken(tokenString string) (*claims, error) {
 	return claims, nil
 }
 
-func (j *JwtService) AuthRequired(c *fiber.Ctx) error {
+func (j *AuthService) AuthRequired(c *fiber.Ctx) error {
 	tokenString := c.Cookies("jwt")
 	claims, err := j.ValidateToken(tokenString)
 	if err != nil {
-		return err
+		log.Error().Err(err).Msg("Failed to validate token")
+		return fiber.NewError(fiber.StatusUnauthorized, "Unauthorized")
 	}
+
+	log.Info().
+		Str("userID", claims.UserID).
+		Str("role", claims.Role).
+		Msg("Token validated successfully")
 
 	c.Locals("userID", claims.UserID)
 	c.Locals("role", claims.Role)
 	return c.Next()
 }
 
-// idk how it block the routes
-// and give improper error message
-// such as "Cannot GET /api/event"
-func (j *JwtService) AdminOnly(c *fiber.Ctx) error {
-	if err := j.AuthRequired(c); err != nil {
-		return err
+func (j *AuthService) AdminRequired(c *fiber.Ctx) error {
+	// Extract JWT token from cookies
+	tokenString := c.Cookies("jwt")
+	if tokenString == "" {
+		log.Error().Msg("JWT cookie is missing")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Unauthorized"})
 	}
 
-	role, ok := c.Locals("role").(string)
-	if !ok {
-		log.Error().Msg("Role not found in token")
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "Role not found in token"})
+	// Validate token
+	claims, err := j.ValidateToken(tokenString)
+	if err != nil {
+		log.Error().Err(err).Msg("Failed to validate token")
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Unauthorized"})
 	}
 
-	fmt.Println(role)
+	log.Info().
+		Str("userID", claims.UserID).
+		Str("role", claims.Role).
+		Msg("Token validated successfully")
 
-	if role != "admin" {
-		log.Error().Msg("Admin access only")
+	// Check if the user has the admin role
+	if claims.Role != "admin" {
+		log.Warn().
+			Str("userID", claims.UserID).
+			Str("role", claims.Role).
+			Msg("Access denied: Admin access only")
 		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "Admin access only"})
 	}
 
+	// Store user data in locals for later use
+	c.Locals("userID", claims.UserID)
+	c.Locals("role", claims.Role)
+
+	log.Info().Msg("Admin access granted")
 	return c.Next()
 }

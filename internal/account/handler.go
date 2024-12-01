@@ -10,10 +10,10 @@ import (
 
 type httpHandler struct {
 	svc *Service
-	jwt auth.Jwt
+	jwt auth.Auth
 }
 
-func NewHttpHandler(svc *Service, jwt auth.Jwt) *httpHandler {
+func NewHttpHandler(svc *Service, jwt auth.Auth) *httpHandler {
 	return &httpHandler{
 		svc: svc,
 		jwt: jwt,
