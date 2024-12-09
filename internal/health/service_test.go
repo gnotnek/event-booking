@@ -1,6 +1,7 @@
 package health
 
 import (
+	"context"
 	"event-booking/internal/entity"
 	"event-booking/internal/health/mocks"
 	"testing"
@@ -31,7 +32,7 @@ func TestCheck(t *testing.T) {
 			mockRepo.On("CheckDatabase", mock.Anything).Return(tt.mockDatabaseError).Once()
 
 			svc := &Service{repo: mockRepo}
-			healthComponent, isHealthy := svc.Check()
+			healthComponent, isHealthy := svc.Check(context.Background())
 
 			assert.Equal(t, tt.expectedDatabaseState, healthComponent.Database)
 			assert.Equal(t, tt.expectedHealthy, isHealthy)

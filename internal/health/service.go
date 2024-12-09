@@ -1,6 +1,7 @@
 package health
 
 import (
+	"context"
 	"event-booking/internal/entity"
 
 	"github.com/rs/zerolog/log"
@@ -8,7 +9,7 @@ import (
 
 //go:generate mockery --case snake --name Repository
 type Repository interface {
-	CheckDatabase() error
+	CheckDatabase(ctx context.Context) error
 }
 
 type Service struct {
@@ -21,12 +22,12 @@ func NewService(repo Repository) *Service {
 	}
 }
 
-func (s *Service) Check() (*entity.HealthComponent, bool) {
+func (s *Service) Check(ctx context.Context) (*entity.HealthComponent, bool) {
 	healthComponent := &entity.HealthComponent{
 		Database: entity.HealthStateOK,
 	}
 
-	if err := s.repo.CheckDatabase(); err != nil {
+	if err := s.repo.CheckDatabase(ctx); err != nil {
 		log.Error().Msgf("check database error: %s", err.Error())
 		healthComponent.Database = entity.HealthStateFail
 	}

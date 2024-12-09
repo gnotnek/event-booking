@@ -1,6 +1,8 @@
 package health
 
 import (
+	"context"
+
 	"gorm.io/gorm"
 )
 
@@ -14,6 +16,15 @@ func NewRepository(db *gorm.DB) *repo {
 	}
 }
 
-func (r *repo) CheckDatabase() error {
-	return r.db.Exec("SELECT 1").Error
+func (r *repo) CheckDatabase(ctx context.Context) error {
+	sqlDB, err := r.db.WithContext(ctx).DB()
+	if err != nil {
+		return err
+	}
+
+	if err := sqlDB.Ping(); err != nil {
+		return err
+	}
+
+	return nil
 }

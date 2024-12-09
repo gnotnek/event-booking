@@ -13,7 +13,7 @@ func NewHttpHandler(service *Service) *httpHandler {
 }
 
 func (h *httpHandler) HealthCheck(c *fiber.Ctx) error {
-	healthComponent, isHealthy := h.service.Check()
+	healthComponent, isHealthy := h.service.Check(c.Context())
 	if isHealthy {
 		return c.JSON(fiber.Map{
 			"status":     "ok",
