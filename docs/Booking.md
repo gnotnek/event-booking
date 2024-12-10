@@ -22,7 +22,7 @@ POST /api/booking
 ### Example cURL
 
 ```sh
-curl -X POST http://yourapiurl.com/api/booking \
+curl -X POST http://yourhostdomain.com/api/booking \
 -H "Content-Type: application/json" \
 -d '{
     "user_id" : "888849e0-7a32-4554-af86-7e9796466716",
@@ -63,7 +63,7 @@ GET api/booking
 ### Example cURL
 
 ```sh
-curl -X GET http://yourapiurl.com/api/booking \
+curl -X GET http://yourhostdomain.com/api/booking \
 -H "Content-Type: application/json"
 ```
 
@@ -159,7 +159,7 @@ GET api/booking/:id
 ### Example cURl
 
 ```sh
-curl -X GET http://yourapiurl.com/api/booking/5b03dd02-34fd-43a1-9a77-c7bbd6c19979 \
+curl -X GET http://yourhostdomain.com/api/booking/5b03dd02-34fd-43a1-9a77-c7bbd6c19979 \
 -H "Content-Type: application/json"
 ```
 
@@ -222,7 +222,7 @@ DELETE api/booking/:id
 ### Example cURL
 
 ```sh
-curl -X DELETE http://yourapiurl.com/api/booking/5b03dd02-34fd-43a1-9a77-c7bbd6c19979 \
+curl -X DELETE http://yourhostdomain.com/api/booking/5b03dd02-34fd-43a1-9a77-c7bbd6c19979 \
 -H "Content-Type: application/json"
 ```
 

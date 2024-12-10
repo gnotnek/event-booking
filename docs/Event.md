@@ -1,5 +1,5 @@
 # Event Management Documentation
-
+Some endpoints just accessible by admin account, the usual user just can see all the listed event
 ## Create New Event
 
 <details>
@@ -26,7 +26,7 @@ POST /api/event
 ### Example cURL
 
 ```sh
-curl -X POST http://yourapiurl.com/api/event \
+curl -X POST http://yourhostdomain.com/api/event \
 -H "Content-Type: application/json" \
 -d '{
     "name": "Music Festival 2023",
@@ -74,7 +74,7 @@ GET /api/event
 ### Example cURL
 
 ```sh
-curl -X GET http://yourapiurl.com/api/event \
+curl -X GET http://yourhostdomain.com/api/event \
 -H "Content-Type: application/json"
 ```
 
@@ -118,7 +118,7 @@ GET /api/event/:id
 ### Example cURL
 
 ```sh
-curl -X GET http://yourapiurl.com/api/event/391ced0f-26b6-4bc3-8019-d8dc805051bf \
+curl -X GET http://yourhostdomain.com/api/event/391ced0f-26b6-4bc3-8019-d8dc805051bf \
 -H "Content-Type: application/json"
 ```
 
@@ -172,7 +172,7 @@ POST /api/event/:id
 ### Example cURL
 
 ```sh
-curl -X POST http://yourapiurl.com/api/event/391ced0f-26b6-4bc3-8019-d8dc805051bf \
+curl -X POST http://yourhostdomain.com/api/event/391ced0f-26b6-4bc3-8019-d8dc805051bf \
 -H "Content-Type: application/json" \
 -d '{
     "name": "Music Festival 2023",
@@ -224,7 +224,7 @@ POST /api/event/:id
 ### Example cURL
 
 ```sh
-curl -X POST http://yourapiurl.com/api/event/391ced0f-26b6-4bc3-8019-d8dc805051bf \
+curl -X POST http://yourhostdomain.com/api/event/391ced0f-26b6-4bc3-8019-d8dc805051bf \
 -H "Content-Type: application/json" \
 ```
 

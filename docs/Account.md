@@ -20,7 +20,7 @@
 ```
 ### Example cURL Request
 ```sh
-curl -X POST http://yourapiurl.com/api/signup \
+curl -X POST http://yourhostdomain.com/api/signup \
 -H "Content-Type: application/json" \
 -d '{
     "name": "John Doe",
@@ -52,7 +52,7 @@ curl -X POST http://yourapiurl.com/api/signup \
 ```
 ### Example cURL Request
 ```sh
-curl -X POST http://yourapiurl.com/api/signup \
+curl -X POST http://yourhostdomain.com/api/signup \
 -H "Content-Type: application/json" \
 -d '{
     "name" : "John admin",
@@ -85,7 +85,7 @@ POST /api/login
 
 ### Example cURL Request
 ```sh
-curl -X POST http://yourapiurl.com/api/login \
+curl -X POST http://yourhostdomain.com/api/login \
 -H "Content-Type: application/json" \
 -d '{
     "email" : "johnadmin@test.com",
