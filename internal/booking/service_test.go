@@ -101,6 +101,12 @@ func TestSaveBookingService(t *testing.T) {
 		ID:       uuid.New(),
 		EventID:  uuid.New(),
 		UserID:   uuid.New(),
+		Quantity: 3,
+	}
+
+	mockRequestUpdate := &BookingInputPayload{
+		EventID:  uuid.New(),
+		UserID:   uuid.New(),
 		Quantity: 2,
 	}
 
@@ -116,7 +122,7 @@ func TestSaveBookingService(t *testing.T) {
 		mockBookingRepo.On("Save", mockRequest).Return(expectedBooking, nil).Once()
 
 		svc := NewService(mockBookingRepo, nil)
-		booking, err := svc.SaveBookingService(mockRequest)
+		booking, err := svc.SaveBookingService(mockRequest.ID.String(), *mockRequestUpdate)
 		if err != nil {
 			t.Errorf("expected error to be nil; got %v", err)
 		}
@@ -128,7 +134,7 @@ func TestSaveBookingService(t *testing.T) {
 		mockBookingRepo.On("Save", mockRequest).Return(nil, assert.AnError).Once()
 
 		svc := NewService(mockBookingRepo, nil)
-		_, err := svc.SaveBookingService(mockRequest)
+		_, err := svc.SaveBookingService(mockRequest.ID.String(), *mockRequestUpdate)
 		assert.Equal(t, assert.AnError, err)
 	})
 }

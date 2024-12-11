@@ -65,8 +65,35 @@ func (s *Service) CreateBookingService(booking *entity.Booking) (*entity.Booking
 	return booking, nil
 }
 
-func (s *Service) SaveBookingService(booking *entity.Booking) (*entity.Booking, error) {
-	booking, err := s.repo.Save(booking)
+func (s *Service) SaveBookingService(id string, newBooking BookingInputPayload) (*entity.Booking, error) {
+	booking, err := s.repo.Find(id)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return nil, err
+	}
+
+	event, err := s.eventRepository.Find(booking.EventID.String())
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return nil, err
+	}
+
+	event.AvailableSeat += booking.Quantity
+	event.AvailableSeat -= newBooking.Quantity
+	if event.AvailableSeat < 0 {
+		return nil, errors.New("not enough seat available")
+	}
+
+	booking.Quantity = newBooking.Quantity
+	booking.TotalPrice = event.Price * float64(newBooking.Quantity)
+
+	_, err = s.eventRepository.Save(event)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return nil, err
+	}
+
+	booking, err = s.repo.Save(booking)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return nil, err

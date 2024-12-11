@@ -1,8 +1,8 @@
 package booking
 
 import (
+	"event-booking/internal/api/responses"
 	"event-booking/internal/entity"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/google/uuid"
@@ -25,23 +25,10 @@ type BookingInputPayload struct {
 	Quantity int       `json:"quantity"`
 }
 
-type BookingResponse struct {
-	ID         uuid.UUID `json:"id"`
-	UserID     uuid.UUID `json:"user_id"`
-	EventID    uuid.UUID `json:"event_id"`
-	Quantity   int       `json:"quantity"`
-	TotalPrice float64   `json:"total_price"`
-	CreatedAt  time.Time `json:"created_at"`
-	UpdatedAt  time.Time `json:"updated_at"`
-}
-
 func (h *httpHandler) BookEventHandler(c *fiber.Ctx) error {
 	book := new(BookingInputPayload)
 	if err := c.BodyParser(book); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
-			"message": "Bad Request",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
 	}
 
 	newBook := &entity.Booking{
@@ -52,45 +39,44 @@ func (h *httpHandler) BookEventHandler(c *fiber.Ctx) error {
 
 	newBook, err := h.svc.CreateBookingService(newBook)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  fiber.StatusInternalServerError,
-			"message": "Internal Server Error",
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"message": "Event booked successfully",
-		"booking": BookingResponse{
-			ID:         newBook.ID,
-			UserID:     newBook.UserID,
-			EventID:    newBook.EventID,
-			Quantity:   newBook.Quantity,
-			TotalPrice: newBook.TotalPrice,
-			CreatedAt:  newBook.CreatedAt,
-			UpdatedAt:  newBook.UpdatedAt,
-		},
-	})
+	return c.Status(fiber.StatusCreated).JSON(responses.NewDataResponse("Booking created successfully", responses.BookingResponseObject{
+		ID:         newBook.ID,
+		UserID:     newBook.UserID,
+		EventID:    newBook.EventID,
+		Quantity:   newBook.Quantity,
+		TotalPrice: newBook.TotalPrice,
+		CreatedAt:  newBook.CreatedAt,
+		UpdatedAt:  newBook.UpdatedAt,
+	}))
 }
 
 func (h *httpHandler) GetBookedEventsHandler(c *fiber.Ctx) error {
 	bookings, err := h.svc.FindAllBookingService()
 	if err != nil {
 		if err.Error() == gorm.ErrRecordNotFound.Error() {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"status":  fiber.StatusNotFound,
-				"message": "No booking found",
-			})
+			return c.Status(fiber.StatusNotFound).JSON(responses.NewErrorResponse("Booking not found"))
 		} else {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"status":  fiber.StatusInternalServerError,
-				"message": "Internal Server Error",
-			})
+			return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
 		}
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"bookings": bookings,
-	})
+	var bookedEvents []responses.BookingResponseObject
+	for _, book := range bookings {
+		bookedEvents = append(bookedEvents, responses.BookingResponseObject{
+			ID:         book.ID,
+			UserID:     book.UserID,
+			EventID:    book.EventID,
+			Quantity:   book.Quantity,
+			TotalPrice: book.TotalPrice,
+			CreatedAt:  book.CreatedAt,
+			UpdatedAt:  book.UpdatedAt,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(responses.NewDataResponse("Bookings found", bookedEvents))
 }
 
 func (h *httpHandler) GetBookedEventByIDHandler(c *fiber.Ctx) error {
@@ -98,21 +84,21 @@ func (h *httpHandler) GetBookedEventByIDHandler(c *fiber.Ctx) error {
 	book, err := h.svc.FindBookingService(id)
 	if err != nil {
 		if err.Error() == gorm.ErrRecordNotFound.Error() {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"status":  fiber.StatusNotFound,
-				"message": "Booking not found",
-			})
+			return c.Status(fiber.StatusNotFound).JSON(responses.NewErrorResponse("Booking not found"))
 		} else {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"status":  fiber.StatusInternalServerError,
-				"message": "Internal Server Error",
-			})
+			return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
 		}
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"booking": book,
-	})
+	return c.Status(fiber.StatusOK).JSON(responses.NewDataResponse("Booking found", responses.BookingResponseObject{
+		ID:         book.ID,
+		UserID:     book.UserID,
+		EventID:    book.EventID,
+		Quantity:   book.Quantity,
+		TotalPrice: book.TotalPrice,
+		CreatedAt:  book.CreatedAt,
+		UpdatedAt:  book.UpdatedAt,
+	}))
 }
 
 func (h *httpHandler) CancelBookedEventHandler(c *fiber.Ctx) error {
@@ -120,31 +106,39 @@ func (h *httpHandler) CancelBookedEventHandler(c *fiber.Ctx) error {
 	book, err := h.svc.FindBookingService(id)
 	if err != nil {
 		if err.Error() == gorm.ErrRecordNotFound.Error() {
-			return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-				"status":  fiber.StatusNotFound,
-				"message": "Booking not found",
-			})
+			return c.Status(fiber.StatusNotFound).JSON(responses.NewErrorResponse("Booking not found"))
 		} else {
-			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-				"status":  fiber.StatusInternalServerError,
-				"message": "Internal Server Error",
-			})
+			return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
 		}
 	}
 
 	err = h.svc.DeleteBookingService(id, book)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  fiber.StatusInternalServerError,
-			"message": "Internal Server Error",
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "Booking canceled successfully",
-	})
+	return c.Status(fiber.StatusOK).JSON(responses.NewSuccessResponse("Booking canceled successfully"))
 }
 
 func (h *httpHandler) UpdateBookedEventHandler(c *fiber.Ctx) error {
-	return nil
+	id := c.Params("id")
+	newBook := new(BookingInputPayload)
+	book, err := h.svc.SaveBookingService(id, *newBook)
+	if err != nil {
+		if err.Error() == gorm.ErrRecordNotFound.Error() {
+			return c.Status(fiber.StatusNotFound).JSON(responses.NewErrorResponse("Booking not found"))
+		} else {
+			return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
+		}
+	}
+
+	return c.Status(fiber.StatusOK).JSON(responses.NewDataResponse("Booking updated successfully", responses.BookingResponseObject{
+		ID:         book.ID,
+		UserID:     book.UserID,
+		EventID:    book.EventID,
+		Quantity:   book.Quantity,
+		TotalPrice: book.TotalPrice,
+		CreatedAt:  book.CreatedAt,
+		UpdatedAt:  book.UpdatedAt,
+	}))
 }

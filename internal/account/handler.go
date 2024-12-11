@@ -1,6 +1,7 @@
 package account
 
 import (
+	"event-booking/internal/api/responses"
 	"event-booking/internal/auth"
 	"event-booking/internal/entity"
 	"time"
@@ -30,10 +31,7 @@ type SignUpPayload struct {
 func (h *httpHandler) SignUpUserHandler(c *fiber.Ctx) error {
 	user := new(SignUpPayload)
 	if err := c.BodyParser(user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
-			"message": "Bad Request",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
 	}
 
 	newUser := &entity.User{
@@ -48,16 +46,10 @@ func (h *httpHandler) SignUpUserHandler(c *fiber.Ctx) error {
 
 	err := h.svc.SignUpUserService(newUser)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  fiber.StatusInternalServerError,
-			"message": "Internal Server Error",
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
 	}
 
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{
-		"message": "User created successfully",
-		"user":    &newUser,
-	})
+	return c.Status(fiber.StatusCreated).JSON(responses.NewSuccessResponse("User created successfully"))
 }
 
 type SignInPayload struct {
@@ -68,10 +60,7 @@ type SignInPayload struct {
 func (h *httpHandler) SignInUserHandler(c *fiber.Ctx) error {
 	user := new(SignInPayload)
 	if err := c.BodyParser(user); err != nil {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"status":  fiber.StatusBadRequest,
-			"message": "Bad Request",
-		})
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
 	}
 
 	userEntity := &entity.User{
@@ -81,18 +70,12 @@ func (h *httpHandler) SignInUserHandler(c *fiber.Ctx) error {
 
 	authenticatedUser, err := h.svc.SignInUserService(userEntity)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"status":  fiber.StatusUnauthorized,
-			"message": "Unauthorized",
-		})
+		return c.Status(fiber.StatusUnauthorized).JSON(responses.NewErrorResponse("Unauthorized"))
 	}
 
 	token, err := h.jwt.CreateToken(authenticatedUser.ID, authenticatedUser.Role)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"status":  fiber.StatusInternalServerError,
-			"message": "Internal Server Error",
-		})
+		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
 	}
 
 	c.Cookie(&fiber.Cookie{
@@ -101,9 +84,11 @@ func (h *httpHandler) SignInUserHandler(c *fiber.Ctx) error {
 		Expires: time.Now().Add(time.Hour * 24),
 	})
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "User signed in successfully",
-		"user":    authenticatedUser,
+	userDTO := responses.UserResponseObject{ID: authenticatedUser.ID, Name: authenticatedUser.Name, Email: authenticatedUser.Email, Role: authenticatedUser.Role}
+
+	return c.Status(fiber.StatusOK).JSON(responses.DataResponse{
+		Message: "Log in successful",
+		Data:    userDTO,
 	})
 }
 
@@ -114,9 +99,7 @@ func (h *httpHandler) SignOutUserHandler(c *fiber.Ctx) error {
 		Expires: time.Now().Add(-time.Hour),
 	})
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "User signed out successfully",
-	})
+	return c.Status(fiber.StatusOK).JSON(responses.NewSuccessResponse("User signed out successfully"))
 }
 
 func (h *httpHandler) GetUserByIDHandler(c *fiber.Ctx) error {
@@ -124,14 +107,13 @@ func (h *httpHandler) GetUserByIDHandler(c *fiber.Ctx) error {
 
 	user, err := h.svc.FindByIDService(userID)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"status":  fiber.StatusNotFound,
-			"message": "User not found",
-		})
+		return c.Status(fiber.StatusNotFound).JSON(responses.NewErrorResponse("User not found"))
 	}
 
-	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"message": "User found",
-		"user":    user,
+	userDTO := responses.UserResponseObject{ID: user.ID, Email: user.Email, Role: user.Role}
+
+	return c.Status(fiber.StatusOK).JSON(responses.DataResponse{
+		Message: "User found",
+		Data:    userDTO,
 	})
 }
