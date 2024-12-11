@@ -8,8 +8,10 @@ import (
 	"event-booking/internal/booking"
 	"event-booking/internal/config"
 	"event-booking/internal/event"
+	"event-booking/internal/export"
 	"event-booking/internal/health"
 	"event-booking/internal/postgres"
+	"event-booking/internal/rabbitmq"
 	"fmt"
 	"os"
 	"os/signal"
@@ -24,9 +26,14 @@ import (
 func NewServer() *Server {
 	cfg := config.Load()
 
+	// Database Connection
 	db := postgres.NewGORM(cfg.Database)
 	postgres.Migrate(db)
 
+	// RabbitMQ
+	rabbitCon := rabbitmq.InitRabbitMQ(&cfg.RabbitMQ)
+
+	// middleware
 	middlewareService := auth.NewAuthService(cfg.App.JwtSecretKey)
 
 	// Health
@@ -48,6 +55,10 @@ func NewServer() *Server {
 	bookingRepo := booking.NewRepository(db)
 	bookingSvc := booking.NewService(bookingRepo, eventRepo)
 	bookingHandler := booking.NewHttpHandler(bookingSvc)
+
+	// Export
+	exportSvc := export.NewService(rabbitCon, eventRepo, bookingRepo)
+	exportHandler := export.NewHttpHandler(exportSvc)
 
 	app := fiber.New()
 
@@ -72,7 +83,6 @@ func NewServer() *Server {
 	app.Get("/api/account/:id", middlewareService.AuthRequired, accountHandler.GetUserByIDHandler)
 
 	// Event Admin routes
-	// the middleware AdminRequired is still error, idk why
 	app.Post("/api/admin/event", middlewareService.AdminRequired, eventHandler.CreateEventHandler)
 	app.Get("/api/admin/event", middlewareService.AdminRequired, eventHandler.FindAllEventHandler)
 	app.Get("/api/admin/event/:id", middlewareService.AdminRequired, eventHandler.FindEventHandler)
@@ -80,11 +90,8 @@ func NewServer() *Server {
 	app.Delete("/api/admin/event/:id", middlewareService.AdminRequired, eventHandler.DeleteEventHandler)
 
 	// Event routes
-	app.Post("/api/event", middlewareService.AuthRequired, eventHandler.CreateEventHandler)
 	app.Get("/api/event", middlewareService.AuthRequired, eventHandler.FindAllEventHandler)
 	app.Get("/api/event/:id", middlewareService.AuthRequired, eventHandler.FindEventHandler)
-	app.Put("/api/event/:id", middlewareService.AuthRequired, eventHandler.SaveEventHandler)
-	app.Delete("/api/event/:id", middlewareService.AuthRequired, eventHandler.DeleteEventHandler)
 
 	// Booking routes
 	app.Post("/api/booking", middlewareService.AuthRequired, bookingHandler.BookEventHandler)
@@ -92,6 +99,10 @@ func NewServer() *Server {
 	app.Get("/api/booking/:id", middlewareService.AuthRequired, bookingHandler.GetBookedEventByIDHandler)
 	app.Put("/api/booking/:id", middlewareService.AuthRequired, bookingHandler.UpdateBookedEventHandler)
 	app.Delete("/api/booking/:id", middlewareService.AuthRequired, bookingHandler.CancelBookedEventHandler)
+
+	// Export routes
+	app.Get("/api/export/event", middlewareService.AdminRequired, exportHandler.ExportAllEventHandler)
+	app.Get("/api/export/booking/:id", middlewareService.AdminRequired, exportHandler.ExportBookingHandler)
 
 	return &Server{fiber: app}
 }

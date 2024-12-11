@@ -24,6 +24,7 @@ func Load() *Config {
 type Config struct {
 	App      App
 	Database Database
+	RabbitMQ RabbitMQ
 }
 
 type App struct {
@@ -36,6 +37,10 @@ type Database struct {
 	User     string `env:"DATABASE_USER"`
 	Password string `env:"DATABASE_PASSWORD"`
 	Name     string `env:"DATABASE_NAME"`
+}
+
+type RabbitMQ struct {
+	Url string `env:"RABBITMQ_URL"`
 }
 
 func (d Database) DataSourceName() string {
