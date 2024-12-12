@@ -36,6 +36,17 @@ type BookingResponseObject struct {
 	UpdatedAt  time.Time `json:"updated_at"`
 }
 
+type EventResponseObject struct {
+	ID            uuid.UUID `json:"id"`
+	Name          string    `json:"name"`
+	Location      string    `json:"location"`
+	StartDate     time.Time `json:"start_date"`
+	EndDate       time.Time `json:"end_date"`
+	Price         float64   `json:"price"`
+	TotalSeat     int       `json:"total_seat"`
+	AvailableSeat int       `json:"available_seat"`
+}
+
 func NewSuccessResponse(message string) *SuccessResponse {
 	return &SuccessResponse{
 		Message: message,
