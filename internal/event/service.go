@@ -2,6 +2,7 @@ package event
 
 import (
 	"event-booking/internal/entity"
+	"fmt"
 
 	"github.com/rs/zerolog/log"
 )
@@ -12,6 +13,7 @@ type Repository interface {
 	Save(event *entity.Event) (*entity.Event, error)
 	FindAll() ([]entity.Event, error)
 	Find(id string) (*entity.Event, error)
+	FindByName(name string) (*entity.Event, error)
 	Delete(id string) error
 }
 
@@ -26,7 +28,13 @@ func NewService(repo Repository) *Service {
 }
 
 func (s *Service) CreateEventService(event *entity.Event) (*entity.Event, error) {
-	event, err := s.repo.Create(event)
+	_, err := s.repo.FindByName(event.Name)
+	if err == nil {
+		log.Error().Msg("event already exists")
+		return nil, fmt.Errorf("event already exists")
+	}
+
+	event, err = s.repo.Create(event)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return nil, err

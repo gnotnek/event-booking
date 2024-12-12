@@ -50,6 +50,15 @@ func (r *repo) Find(id string) (*entity.Event, error) {
 	return &event, nil
 }
 
+func (r *repo) FindByName(name string) (*entity.Event, error) {
+	var event entity.Event
+	if err := r.db.Where("name = ?", name).First(&event).Error; err != nil {
+		return nil, err
+	}
+
+	return &event, nil
+}
+
 func (r *repo) Delete(id string) error {
 	err := r.db.Where("id = ?", id).First(&entity.Event{}).Delete(&entity.Event{}).Error
 	if err != nil {

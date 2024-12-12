@@ -26,7 +26,7 @@ func NewAuthService(jwtKey string) *AuthService {
 
 type claims struct {
 	UserID string `json:"user_id"`
-	Role   string `json:"role"` // Added Role field
+	Role   string `json:"role"`
 	jwt.RegisteredClaims
 }
 
@@ -67,11 +67,6 @@ func (j *AuthService) AuthRequired(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusUnauthorized, "Unauthorized")
 	}
 
-	log.Info().
-		Str("userID", claims.UserID).
-		Str("role", claims.Role).
-		Msg("Token validated successfully")
-
 	c.Locals("userID", claims.UserID)
 	c.Locals("role", claims.Role)
 	return c.Next()
@@ -92,11 +87,6 @@ func (j *AuthService) AdminRequired(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Unauthorized"})
 	}
 
-	log.Info().
-		Str("userID", claims.UserID).
-		Str("role", claims.Role).
-		Msg("Token validated successfully")
-
 	// Check if the user has the admin role
 	if claims.Role != "admin" {
 		log.Warn().
@@ -110,6 +100,5 @@ func (j *AuthService) AdminRequired(c *fiber.Ctx) error {
 	c.Locals("userID", claims.UserID)
 	c.Locals("role", claims.Role)
 
-	log.Info().Msg("Admin access granted")
 	return c.Next()
 }

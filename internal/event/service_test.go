@@ -26,6 +26,7 @@ func TestCreateEvent(t *testing.T) {
 
 	t.Run("create event successfully", func(t *testing.T) {
 		mockRepo.On("Create", mockEvent).Return(mockEvent, nil).Once()
+		mockRepo.On("FindByName", mockEvent.Name).Return(nil, nil).Once()
 
 		svc := NewService(mockRepo)
 		event, err := svc.CreateEventService(mockEvent)
@@ -34,6 +35,16 @@ func TestCreateEvent(t *testing.T) {
 		}
 
 		assert.Equal(t, mockEvent, event)
+	})
+
+	t.Run("event already exists", func(t *testing.T) {
+		mockRepo.On("FindByName", mockEvent.Name).Return(mockEvent, nil).Once()
+
+		svc := NewService(mockRepo)
+		_, err := svc.CreateEventService(mockEvent)
+		if err == nil {
+			t.Error("expected error; got nil")
+		}
 	})
 
 	t.Run("create event failed", func(t *testing.T) {

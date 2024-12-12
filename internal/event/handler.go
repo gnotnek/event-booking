@@ -47,7 +47,7 @@ func (h *httpHandler) CreateEventHandler(c *fiber.Ctx) error {
 
 	createdEvent, err := h.svc.CreateEventService(newEvent)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
+		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse(err.Error()))
 	}
 
 	eventResponse := responses.EventResponseObject{

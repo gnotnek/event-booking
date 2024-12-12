@@ -121,6 +121,36 @@ func (_m *Repository) FindAll() ([]entity.Event, error) {
 	return r0, r1
 }
 
+// FindByName provides a mock function with given fields: name
+func (_m *Repository) FindByName(name string) (*entity.Event, error) {
+	ret := _m.Called(name)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FindByName")
+	}
+
+	var r0 *entity.Event
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (*entity.Event, error)); ok {
+		return rf(name)
+	}
+	if rf, ok := ret.Get(0).(func(string) *entity.Event); ok {
+		r0 = rf(name)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*entity.Event)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(name)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Save provides a mock function with given fields: _a0
 func (_m *Repository) Save(_a0 *entity.Event) (*entity.Event, error) {
 	ret := _m.Called(_a0)
