@@ -2,6 +2,7 @@ package booking
 
 import (
 	"event-booking/internal/api/responses"
+	"event-booking/internal/api/validator"
 	"event-booking/internal/entity"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,25 +11,31 @@ import (
 )
 
 type httpHandler struct {
-	svc *Service
+	svc       *Service
+	validator *validator.Validator
 }
 
-func NewHttpHandler(svc *Service) *httpHandler {
+func NewHttpHandler(svc *Service, validator *validator.Validator) *httpHandler {
 	return &httpHandler{
-		svc: svc,
+		svc:       svc,
+		validator: validator,
 	}
 }
 
 type BookingInputPayload struct {
-	UserID   uuid.UUID `json:"user_id"`
-	EventID  uuid.UUID `json:"event_id"`
-	Quantity int       `json:"quantity"`
+	UserID   uuid.UUID `json:"user_id" validate:"required"`
+	EventID  uuid.UUID `json:"event_id" validate:"required"`
+	Quantity int       `json:"quantity" validate:"required"`
 }
 
 func (h *httpHandler) BookEventHandler(c *fiber.Ctx) error {
 	book := new(BookingInputPayload)
 	if err := c.BodyParser(book); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
+	}
+
+	if err := h.validator.ValidateStruct(book); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse(err.Error()))
 	}
 
 	newBook := &entity.Booking{
@@ -123,6 +130,15 @@ func (h *httpHandler) CancelBookedEventHandler(c *fiber.Ctx) error {
 func (h *httpHandler) UpdateBookedEventHandler(c *fiber.Ctx) error {
 	id := c.Params("id")
 	newBook := new(BookingInputPayload)
+
+	if err := c.BodyParser(newBook); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
+	}
+
+	if err := h.validator.ValidateStruct(newBook); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse(err.Error()))
+	}
+
 	book, err := h.svc.SaveBookingService(id, *newBook)
 	if err != nil {
 		if err.Error() == gorm.ErrRecordNotFound.Error() {

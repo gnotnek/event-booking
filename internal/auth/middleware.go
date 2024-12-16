@@ -1,6 +1,7 @@
 package auth
 
 import (
+	"event-booking/internal/api/responses"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -49,11 +50,13 @@ func (j *AuthService) ValidateToken(tokenString string) (*claims, error) {
 		return []byte(j.jwtKey), nil
 	})
 	if err != nil || !token.Valid {
+		log.Error().Err(err).Msg("Failed to validate token")
 		return nil, fiber.NewError(fiber.StatusUnauthorized, "Unauthorized")
 	}
 
 	claims, ok := token.Claims.(*claims)
 	if !ok {
+		log.Error().Msg("Invalid claims")
 		return nil, fiber.NewError(fiber.StatusUnauthorized, "Invalid claims")
 	}
 
@@ -78,14 +81,14 @@ func (j *AuthService) AdminRequired(c *fiber.Ctx) error {
 	tokenString := c.Cookies("jwt")
 	if tokenString == "" {
 		log.Error().Msg("JWT cookie is missing")
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Unauthorized"})
+		return c.Status(fiber.StatusUnauthorized).JSON(responses.NewErrorResponse("Unauthorized"))
 	}
 
 	// Validate token
 	claims, err := j.ValidateToken(tokenString)
 	if err != nil {
 		log.Error().Err(err).Msg("Failed to validate token")
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{"message": "Unauthorized"})
+		return c.Status(fiber.StatusUnauthorized).JSON(responses.NewErrorResponse("Unauthorized"))
 	}
 
 	// Check if the user has the admin role
@@ -94,7 +97,7 @@ func (j *AuthService) AdminRequired(c *fiber.Ctx) error {
 			Str("userID", claims.UserID).
 			Str("role", claims.Role).
 			Msg("Access denied: Admin access only")
-		return c.Status(fiber.StatusForbidden).JSON(fiber.Map{"message": "Admin access only"})
+		return c.Status(fiber.StatusForbidden).JSON(responses.NewErrorResponse("Access denied: Admin access only"))
 	}
 
 	// Store user data in locals for later use

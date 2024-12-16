@@ -2,7 +2,7 @@
 
 ## Register User
 
-<details>
+
 
 ### Endpoint
 
@@ -29,11 +29,11 @@ curl -X POST http://yourhostdomain.com/api/signup \
 }'
 ```
 
-</details>
+
 
 ## Register User Admin
 
-<details>
+
 
 ### Endpoint
 
@@ -62,11 +62,11 @@ curl -X POST http://yourhostdomain.com/api/signup \
 }'
 ```
 
-</details>
+
 
 ## Log In User
 
-<details>
+
 
 ### Endpoint
 
@@ -93,4 +93,3 @@ curl -X POST http://yourhostdomain.com/api/login \
 }'
 ```
 
-</details>

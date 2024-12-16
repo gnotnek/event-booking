@@ -2,7 +2,7 @@
 
 ## Create Booking
 
-<details>
+
 
 ### Endpoint
 
@@ -48,11 +48,11 @@ curl -X POST http://yourhostdomain.com/api/booking \
 }
 ```
 
-</details>
+
 
 ## Get All Booking
 
-<details>
+
 
 ### Endpoint
 
@@ -140,11 +140,11 @@ curl -X GET http://yourhostdomain.com/api/booking \
 }
 ```
 
-</details>
+
 
 ## Get Booking By ID
 
-<details>
+
 
 ### Endpoint
 
@@ -202,11 +202,11 @@ curl -X GET http://yourhostdomain.com/api/booking/5b03dd02-34fd-43a1-9a77-c7bbd6
 }
 ```
 
-</details>
+
 
 ## Delete Booking
 
-<details>
+
 
 ### Endpoint
 
@@ -234,4 +234,3 @@ curl -X DELETE http://yourhostdomain.com/api/booking/5b03dd02-34fd-43a1-9a77-c7b
 }
 ```
 
-</details>

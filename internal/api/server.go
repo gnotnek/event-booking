@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"event-booking/internal/account"
+	"event-booking/internal/api/validator"
 	"event-booking/internal/auth"
 	"event-booking/internal/booking"
 	"event-booking/internal/config"
@@ -36,6 +37,9 @@ func NewServer() *Server {
 	// middleware
 	middlewareService := auth.NewAuthService(cfg.App.JwtSecretKey)
 
+	// validator
+	validatorService := validator.NewValidator()
+
 	// Health
 	healthRepo := health.NewRepository(db)
 	healthSvc := health.NewService(healthRepo)
@@ -44,17 +48,17 @@ func NewServer() *Server {
 	// Account
 	accountRepo := account.NewRepository(db)
 	accountSvc := account.NewService(accountRepo)
-	accountHandler := account.NewHttpHandler(accountSvc, middlewareService)
+	accountHandler := account.NewHttpHandler(accountSvc, middlewareService, validatorService)
 
 	// Event
 	eventRepo := event.NewRepository(db)
 	eventSvc := event.NewService(eventRepo)
-	eventHandler := event.NewHttpHandler(eventSvc)
+	eventHandler := event.NewHttpHandler(eventSvc, validatorService)
 
 	// Booking
 	bookingRepo := booking.NewRepository(db)
 	bookingSvc := booking.NewService(bookingRepo, eventRepo)
-	bookingHandler := booking.NewHttpHandler(bookingSvc)
+	bookingHandler := booking.NewHttpHandler(bookingSvc, validatorService)
 
 	// Export
 	exportSvc := export.NewService(rabbitCon, eventRepo, bookingRepo)

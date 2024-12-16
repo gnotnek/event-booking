@@ -1,0 +1,1453 @@
+{
+	"info": {
+		"_postman_id": "a3eea4fd-941a-4916-9784-00dffe555adb",
+		"name": "Event Booking",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "17021625"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Post Sign Up",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"John Doe\",\r\n    \"email\" : \"john@test.com\",\r\n    \"password\" : \"12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/signup",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"signup"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 User",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\" : \"John Doe\",\r\n    \"email\" : \"john@@test.com\",\r\n    \"password\" : \"12345\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/api/signup",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"signup"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Mon, 11 Nov 2024 05:29:12 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "335"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User created successfully\",\n    \"user\": {\n        \"id\": \"2e05d402-6760-4dba-8309-be57ccc64a46\",\n        \"name\": \"John Doe\",\n        \"email\": \"john@@test.com\",\n        \"password\": \"$2a$10$A53LF4AwF30doyhnaLKuO.efbyCJ6AddMTj9FOnu.oh1qyGFF38ly\",\n        \"role\": \"user\",\n        \"CreatedAt\": \"2024-11-11T12:29:12.7414758+07:00\",\n        \"UpdatedAt\": \"2024-11-11T12:29:12.7414758+07:00\",\n        \"Bookings\": null\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Post Sign Up Admin",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\" : \"John admin\",\r\n    \"email\" : \"johnadmin@test.com\",\r\n    \"password\" : \"12345\",\r\n    \"role\" : \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/signup",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"signup"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Admin",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\" : \"John admin\",\r\n    \"email\" : \"johnadmin@test.com\",\r\n    \"password\" : \"12345\",\r\n    \"role\" : \"admin\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/api/signup",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"signup"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Mon, 11 Nov 2024 06:46:49 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "342"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User created successfully\",\n    \"user\": {\n        \"id\": \"42120ae0-174d-4251-b851-802b61921415\",\n        \"name\": \"John admin\",\n        \"email\": \"johnadmin@test.com\",\n        \"password\": \"$2a$10$rbLiGIoZBlbL2ArCxuK4q.uj4vf8lY8dbdiP2TqvC1zSlXs4Cvaru\",\n        \"role\": \"admin\",\n        \"CreatedAt\": \"2024-11-11T13:46:49.4305517+07:00\",\n        \"UpdatedAt\": \"2024-11-11T13:46:49.4305517+07:00\",\n        \"Bookings\": null\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Post Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\" : \"johnadmin@test.com\",\r\n    \"password\" : \"12345\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/signin",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"signin"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 User",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\" : \"john@@test.com\",\r\n    \"password\" : \"12345\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/api/signin",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"signin"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Mon, 11 Nov 2024 05:35:21 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "335"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiMmUwNWQ0MDItNjc2MC00ZGJhLTgzMDktYmU1N2NjYzY0YTQ2IiwiZXhwIjoxNzMxMzg5NzIyfQ.rFS_fvC8v_Aa5uQQoNLA8QnHHdZ77Q0_26X1h3qMBR0; expires=Tue, 12 Nov 2024 05:35:22 GMT; path=/; SameSite=Lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User signed in successfully\",\n    \"user\": {\n        \"id\": \"2e05d402-6760-4dba-8309-be57ccc64a46\",\n        \"name\": \"John Doe\",\n        \"email\": \"john@@test.com\",\n        \"password\": \"$2a$10$A53LF4AwF30doyhnaLKuO.efbyCJ6AddMTj9FOnu.oh1qyGFF38ly\",\n        \"role\": \"user\",\n        \"CreatedAt\": \"2024-11-11T12:29:12.741475+07:00\",\n        \"UpdatedAt\": \"2024-11-11T12:29:12.741475+07:00\",\n        \"Bookings\": null\n    }\n}"
+						},
+						{
+							"name": "200 Admin",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"email\" : \"johnadmin@test.com\",\r\n    \"password\" : \"12345\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/api/signin",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"signin"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Mon, 11 Nov 2024 06:47:17 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "342"
+								},
+								{
+									"key": "Set-Cookie",
+									"value": "jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoiNDIxMjBhZTAtMTc0ZC00MjUxLWI4NTEtODAyYjYxOTIxNDE1IiwiZXhwIjoxNzMxMzk0MDM4fQ.nDcFT05_3h7ndaA1qulvEpDcfBlrPj5AI1xzkEF4_Yg; expires=Tue, 12 Nov 2024 06:47:18 GMT; path=/; SameSite=Lax"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User signed in successfully\",\n    \"user\": {\n        \"id\": \"42120ae0-174d-4251-b851-802b61921415\",\n        \"name\": \"John admin\",\n        \"email\": \"johnadmin@test.com\",\n        \"password\": \"$2a$10$rbLiGIoZBlbL2ArCxuK4q.uj4vf8lY8dbdiP2TqvC1zSlXs4Cvaru\",\n        \"role\": \"admin\",\n        \"CreatedAt\": \"2024-11-11T13:46:49.430551+07:00\",\n        \"UpdatedAt\": \"2024-11-11T13:46:49.430551+07:00\",\n        \"Bookings\": null\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get User By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/account/:id",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"account",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "888849e0-7a32-4554-af86-7e9796466716"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "404",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/account/:id",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"account",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "888849e0-7a32-4554-af86-7e9796466716"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Tue, 12 Nov 2024 15:35:39 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "41"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User not found\",\n    \"status\": 404\n}"
+						},
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/account/:id",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"account",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "888849e0-7a32-4554-af86-7e9796466716"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Tue, 12 Nov 2024 15:37:09 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "317"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"User found\",\n    \"user\": {\n        \"id\": \"888849e0-7a32-4554-af86-7e9796466716\",\n        \"name\": \"John Doe\",\n        \"email\": \"john@test.com\",\n        \"password\": \"$2a$10$dixHYCXABGchwlEDY/0X6.YxVQEnlaWC56zCO5EDfaliCzFU88s56\",\n        \"role\": \"user\",\n        \"CreatedAt\": \"2024-11-12T18:52:01.941889+07:00\",\n        \"UpdatedAt\": \"2024-11-12T18:52:01.941889+07:00\",\n        \"Bookings\": null\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Event",
+			"item": [
+				{
+					"name": "Admin",
+					"item": [
+						{
+							"name": "Post Make Event",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n  \"name\": \"Gourmet Food Festival\",\r\n  \"location\": \"Seattle, WA\",\r\n  \"start_date\": \"2023-07-20T11:00:00Z\",\r\n  \"end_date\": \"2023-07-22T21:00:00Z\",\r\n  \"price\": 25.00,\r\n  \"total_seat\": 1000,\r\n  \"available_seat\": 600\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/api/admin/event",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"event"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "201",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"Tech Conference 2023\",\r\n  \"location\": \"San Francisco, CA\",\r\n  \"start_date\": \"2023-11-01T09:00:00Z\",\r\n  \"end_date\": \"2023-11-03T17:00:00Z\",\r\n  \"price\": 299.99,\r\n  \"total_seat\": 500,\r\n  \"available_seat\": 150\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BaseUrl}}/api/event",
+											"host": [
+												"{{BaseUrl}}"
+											],
+											"path": [
+												"api",
+												"event"
+											]
+										}
+									},
+									"status": "Created",
+									"code": 201,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Tue, 12 Nov 2024 07:46:35 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "390"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"event\": {\n        \"id\": \"391ced0f-26b6-4bc3-8019-d8dc805051bf\",\n        \"name\": \"Tech Conference 2023\",\n        \"location\": \"San Francisco, CA\",\n        \"start_date\": \"2023-11-01T09:00:00Z\",\n        \"end_date\": \"2023-11-03T17:00:00Z\",\n        \"price\": 299.99,\n        \"total_seat\": 500,\n        \"available_seat\": 150,\n        \"CreatedAt\": \"2024-11-12T14:46:35.8432188+07:00\",\n        \"UpdatedAt\": \"2024-11-12T14:46:35.8432188+07:00\",\n        \"Bookings\": null\n    },\n    \"message\": \"Event created successfully\"\n}"
+								},
+								{
+									"name": "500",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": \"Tech Conference 2023\",\r\n  \"location\": \"San Francisco, CA\",\r\n  \"start_date\": \"2023-11-01T09:00:00Z\",\r\n  \"end_date\": \"2023-11-03T17:00:00Z\",\r\n  \"price\": 299.99,\r\n  \"total_seat\": 500,\r\n  \"available_seat\": 150\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BaseUrl}}/api/event",
+											"host": [
+												"{{BaseUrl}}"
+											],
+											"path": [
+												"api",
+												"event"
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Tue, 12 Nov 2024 07:47:02 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "48"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Internal Server Error\",\n    \"status\": 500\n}"
+								},
+								{
+									"name": "400",
+									"originalRequest": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n  \"name\": ,\r\n  \"location\": \"San Francisco, CA\",\r\n  \"start_date\": \"2023-11-01T09:00:00Z\",\r\n  \"end_date\": \"2023-11-03T17:00:00Z\",\r\n  \"price\": 299.99,\r\n  \"total_seat\": 500,\r\n  \"available_seat\": 150\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BaseUrl}}/api/event",
+											"host": [
+												"{{BaseUrl}}"
+											],
+											"path": [
+												"api",
+												"event"
+											]
+										}
+									},
+									"status": "Bad Request",
+									"code": 400,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Tue, 12 Nov 2024 07:59:38 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "38"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Bad Request\",\n    \"status\": 400\n}"
+								}
+							]
+						},
+						{
+							"name": "Get All Event",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/admin/event",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"event"
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "200",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{BaseUrl}}/api/event",
+											"host": [
+												"{{BaseUrl}}"
+											],
+											"path": [
+												"api",
+												"event"
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Tue, 12 Nov 2024 07:46:49 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "362"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"events\": [\n        {\n            \"id\": \"391ced0f-26b6-4bc3-8019-d8dc805051bf\",\n            \"name\": \"Tech Conference 2023\",\n            \"location\": \"San Francisco, CA\",\n            \"start_date\": \"2023-11-01T16:00:00+07:00\",\n            \"end_date\": \"2023-11-04T00:00:00+07:00\",\n            \"price\": 299.99,\n            \"total_seat\": 500,\n            \"available_seat\": 150,\n            \"CreatedAt\": \"2024-11-12T14:46:35.843218+07:00\",\n            \"UpdatedAt\": \"2024-11-12T14:46:35.843218+07:00\",\n            \"Bookings\": null\n        }\n    ]\n}"
+								}
+							]
+						},
+						{
+							"name": "Get Event By ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/admin/event/:id",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"event",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "404",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{BaseUrl}}/api/event/:id",
+											"host": [
+												"{{BaseUrl}}"
+											],
+											"path": [
+												"api",
+												"event",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "i"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Tue, 12 Nov 2024 10:05:33 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "42"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Event not found\",\n    \"status\": 404\n}"
+								},
+								{
+									"name": "200",
+									"originalRequest": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{BaseUrl}}/api/event/:id",
+											"host": [
+												"{{BaseUrl}}"
+											],
+											"path": [
+												"api",
+												"event",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "054c589d-79b2-49e3-b77f-f59acabf1350"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Wed, 13 Nov 2024 04:48:29 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "247"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"event\": {\n        \"id\": \"054c589d-79b2-49e3-b77f-f59acabf1350\",\n        \"name\": \"Tech Conference 2023\",\n        \"location\": \"albuquerque, NM\",\n        \"start_date\": \"2023-11-01T16:00:00+07:00\",\n        \"end_date\": \"2023-11-04T00:00:00+07:00\",\n        \"price\": 299.99,\n        \"total_seat\": 500,\n        \"available_seat\": 191\n    }\n}"
+								}
+							]
+						},
+						{
+							"name": "Put Edit Event",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"Tech Conference 2023\",\r\n    \"location\": \"albuquerque, NM\",\r\n    \"start_date\": \"2023-11-01T16:00:00+07:00\",\r\n    \"end_date\": \"2023-11-04T00:00:00+07:00\",\r\n    \"price\": 299.99,\r\n    \"total_seat\": 500,\r\n    \"available_seat\": 200\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/api/admin/event/:id",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"event",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "200",
+									"originalRequest": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\r\n    \"name\": \"Tech Conference 2023\",\r\n    \"location\": \"albuquerque, NM\",\r\n    \"start_date\": \"2023-11-01T16:00:00+07:00\",\r\n    \"end_date\": \"2023-11-04T00:00:00+07:00\",\r\n    \"price\": 299.99,\r\n    \"total_seat\": 500,\r\n    \"available_seat\": 200\r\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{BaseUrl}}/api/event/:id",
+											"host": [
+												"{{BaseUrl}}"
+											],
+											"path": [
+												"api",
+												"event",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "054c589d-79b2-49e3-b77f-f59acabf1350"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Wed, 13 Nov 2024 04:06:42 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "397"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"event\": {\n        \"id\": \"054c589d-79b2-49e3-b77f-f59acabf1350\",\n        \"name\": \"Tech Conference 2023\",\n        \"location\": \"albuquerque, NM\",\n        \"start_date\": \"2023-11-01T16:00:00+07:00\",\n        \"end_date\": \"2023-11-04T00:00:00+07:00\",\n        \"price\": 299.99,\n        \"total_seat\": 500,\n        \"available_seat\": 200,\n        \"CreatedAt\": \"2024-11-12T14:46:35.843218+07:00\",\n        \"UpdatedAt\": \"2024-11-13T11:06:42.5750766+07:00\",\n        \"Bookings\": null\n    },\n    \"message\": \"Event updated successfully\"\n}"
+								}
+							]
+						},
+						{
+							"name": "Delete Event",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/admin/event/:id",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"admin",
+										"event",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": [
+								{
+									"name": "200",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{BaseUrl}}/api/event/:id",
+											"host": [
+												"{{BaseUrl}}"
+											],
+											"path": [
+												"api",
+												"event",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "39a8c388-fc47-4b43-b225-27a02c46fd00"
+												}
+											]
+										}
+									},
+									"status": "OK",
+									"code": 200,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Tue, 12 Nov 2024 10:33:27 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "40"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Event deleted successfully\"\n}"
+								},
+								{
+									"name": "500",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{BaseUrl}}/api/event/:id",
+											"host": [
+												"{{BaseUrl}}"
+											],
+											"path": [
+												"api",
+												"event",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "39a8c388-fc47-4b43-b225-27a02c46fd00"
+												}
+											]
+										}
+									},
+									"status": "Internal Server Error",
+									"code": 500,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Tue, 12 Nov 2024 10:48:14 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "48"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Internal Server Error\",\n    \"status\": 500\n}"
+								},
+								{
+									"name": "404",
+									"originalRequest": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{BaseUrl}}/api/event/:id",
+											"host": [
+												"{{BaseUrl}}"
+											],
+											"path": [
+												"api",
+												"event",
+												":id"
+											],
+											"variable": [
+												{
+													"key": "id",
+													"value": "ebe884ef-0dff-4d21-abe8-6a08be647809"
+												}
+											]
+										}
+									},
+									"status": "Not Found",
+									"code": 404,
+									"_postman_previewlanguage": "json",
+									"header": [
+										{
+											"key": "Date",
+											"value": "Tue, 12 Nov 2024 10:52:23 GMT"
+										},
+										{
+											"key": "Content-Type",
+											"value": "application/json"
+										},
+										{
+											"key": "Content-Length",
+											"value": "42"
+										}
+									],
+									"cookie": [],
+									"body": "{\n    \"message\": \"Event not found\",\n    \"status\": 404\n}"
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Not Admin",
+					"item": [
+						{
+							"name": "Get All Event",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/event",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"event"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get Event By ID",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/event/:id",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"event",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "054c589d-79b2-49e3-b77f-f59acabf1350"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Booking",
+			"item": [
+				{
+					"name": "Post Make Booking",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"user_id\" : \"888849e0-7a32-4554-af86-7e9796466716\",\r\n    \"event_id\" : \"054c589d-79b2-49e3-b77f-f59acabf1350\",\r\n    \"quantity\" : 4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BaseUrl}}/api/booking",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"booking"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"user_id\" : \"888849e0-7a32-4554-af86-7e9796466716\",\r\n    \"event_id\" : \"054c589d-79b2-49e3-b77f-f59acabf1350\",\r\n    \"quantity\" : 3\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BaseUrl}}/api/booking",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"booking"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Nov 2024 04:39:14 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "326"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"booking\": {\n        \"id\": \"5b03dd02-34fd-43a1-9a77-c7bbd6c19979\",\n        \"user_id\": \"888849e0-7a32-4554-af86-7e9796466716\",\n        \"event_id\": \"054c589d-79b2-49e3-b77f-f59acabf1350\",\n        \"quantity\": 3,\n        \"total_price\": 899.97,\n        \"created_at\": \"2024-11-13T11:39:14.1085022+07:00\",\n        \"updated_at\": \"2024-11-13T11:39:14.1085022+07:00\"\n    },\n    \"message\": \"Event booked successfully\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Bookings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/booking",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"booking"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/booking",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"booking"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Nov 2024 05:15:49 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1857"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"bookings\": [\n        {\n            \"id\": \"5b03dd02-34fd-43a1-9a77-c7bbd6c19979\",\n            \"user_id\": \"888849e0-7a32-4554-af86-7e9796466716\",\n            \"event_id\": \"054c589d-79b2-49e3-b77f-f59acabf1350\",\n            \"quantity\": 3,\n            \"total_price\": 899.97,\n            \"CreatedAt\": \"2024-11-13T11:39:14.108502+07:00\",\n            \"UpdatedAt\": \"2024-11-13T11:39:14.108502+07:00\",\n            \"User\": {\n                \"id\": \"888849e0-7a32-4554-af86-7e9796466716\",\n                \"name\": \"John Doe\",\n                \"email\": \"john@test.com\",\n                \"password\": \"$2a$10$dixHYCXABGchwlEDY/0X6.YxVQEnlaWC56zCO5EDfaliCzFU88s56\",\n                \"role\": \"user\",\n                \"CreatedAt\": \"2024-11-12T18:52:01.941889+07:00\",\n                \"UpdatedAt\": \"2024-11-12T18:52:01.941889+07:00\",\n                \"Bookings\": null\n            },\n            \"Event\": {\n                \"id\": \"054c589d-79b2-49e3-b77f-f59acabf1350\",\n                \"name\": \"Tech Conference 2023\",\n                \"location\": \"albuquerque, NM\",\n                \"start_date\": \"2023-11-01T16:00:00+07:00\",\n                \"end_date\": \"2023-11-04T00:00:00+07:00\",\n                \"price\": 299.99,\n                \"total_seat\": 500,\n                \"available_seat\": 187,\n                \"CreatedAt\": \"2024-11-12T14:46:35.843218+07:00\",\n                \"UpdatedAt\": \"2024-11-13T12:15:44.145021+07:00\",\n                \"Bookings\": null\n            }\n        },\n        {\n            \"id\": \"42bc47f6-e5a5-4c3f-bd4f-eab8e5da1d09\",\n            \"user_id\": \"888849e0-7a32-4554-af86-7e9796466716\",\n            \"event_id\": \"054c589d-79b2-49e3-b77f-f59acabf1350\",\n            \"quantity\": 4,\n            \"total_price\": 1199.96,\n            \"CreatedAt\": \"2024-11-13T12:15:44.11612+07:00\",\n            \"UpdatedAt\": \"2024-11-13T12:15:44.11612+07:00\",\n            \"User\": {\n                \"id\": \"888849e0-7a32-4554-af86-7e9796466716\",\n                \"name\": \"John Doe\",\n                \"email\": \"john@test.com\",\n                \"password\": \"$2a$10$dixHYCXABGchwlEDY/0X6.YxVQEnlaWC56zCO5EDfaliCzFU88s56\",\n                \"role\": \"user\",\n                \"CreatedAt\": \"2024-11-12T18:52:01.941889+07:00\",\n                \"UpdatedAt\": \"2024-11-12T18:52:01.941889+07:00\",\n                \"Bookings\": null\n            },\n            \"Event\": {\n                \"id\": \"054c589d-79b2-49e3-b77f-f59acabf1350\",\n                \"name\": \"Tech Conference 2023\",\n                \"location\": \"albuquerque, NM\",\n                \"start_date\": \"2023-11-01T16:00:00+07:00\",\n                \"end_date\": \"2023-11-04T00:00:00+07:00\",\n                \"price\": 299.99,\n                \"total_seat\": 500,\n                \"available_seat\": 187,\n                \"CreatedAt\": \"2024-11-12T14:46:35.843218+07:00\",\n                \"UpdatedAt\": \"2024-11-13T12:15:44.145021+07:00\",\n                \"Bookings\": null\n            }\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Find Booking By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/booking/:id",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"booking",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "5b03dd02-34fd-43a1-9a77-c7bbd6c19979"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/booking/:id",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"booking",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "5b03dd02-34fd-43a1-9a77-c7bbd6c19979"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Nov 2024 05:00:15 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "933"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"booking\": {\n        \"id\": \"5b03dd02-34fd-43a1-9a77-c7bbd6c19979\",\n        \"user_id\": \"888849e0-7a32-4554-af86-7e9796466716\",\n        \"event_id\": \"054c589d-79b2-49e3-b77f-f59acabf1350\",\n        \"quantity\": 3,\n        \"total_price\": 899.97,\n        \"CreatedAt\": \"2024-11-13T11:39:14.108502+07:00\",\n        \"UpdatedAt\": \"2024-11-13T11:39:14.108502+07:00\",\n        \"User\": {\n            \"id\": \"888849e0-7a32-4554-af86-7e9796466716\",\n            \"name\": \"John Doe\",\n            \"email\": \"john@test.com\",\n            \"password\": \"$2a$10$dixHYCXABGchwlEDY/0X6.YxVQEnlaWC56zCO5EDfaliCzFU88s56\",\n            \"role\": \"user\",\n            \"CreatedAt\": \"2024-11-12T18:52:01.941889+07:00\",\n            \"UpdatedAt\": \"2024-11-12T18:52:01.941889+07:00\",\n            \"Bookings\": null\n        },\n        \"Event\": {\n            \"id\": \"054c589d-79b2-49e3-b77f-f59acabf1350\",\n            \"name\": \"Tech Conference 2023\",\n            \"location\": \"albuquerque, NM\",\n            \"start_date\": \"2023-11-01T16:00:00+07:00\",\n            \"end_date\": \"2023-11-04T00:00:00+07:00\",\n            \"price\": 299.99,\n            \"total_seat\": 500,\n            \"available_seat\": 191,\n            \"CreatedAt\": \"2024-11-12T14:46:35.843218+07:00\",\n            \"UpdatedAt\": \"2024-11-13T11:39:14.132148+07:00\",\n            \"Bookings\": null\n        }\n    }\n}"
+						},
+						{
+							"name": "404",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/booking/:id",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"booking",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "42bc47f6-e5a5-4c3f-bd4f-eab8e5da1d09"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Nov 2024 05:22:32 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "44"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Booking not found\",\n    \"status\": 404\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete Booking",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/booking/:id",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"booking",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "42bc47f6-e5a5-4c3f-bd4f-eab8e5da1d09"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/booking/:id",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"booking",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "42bc47f6-e5a5-4c3f-bd4f-eab8e5da1d09"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Nov 2024 05:18:03 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "43"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Booking canceled successfully\"\n}"
+						},
+						{
+							"name": "404",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BaseUrl}}/api/booking/:id",
+									"host": [
+										"{{BaseUrl}}"
+									],
+									"path": [
+										"api",
+										"booking",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": "42bc47f6-e5a5-4c3f-bd4f-eab8e5da1d09"
+										}
+									]
+								}
+							},
+							"status": "Not Found",
+							"code": 404,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Nov 2024 05:22:07 GMT"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Content-Length",
+									"value": "44"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"message\": \"Booking not found\",\n    \"status\": 404\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Export",
+			"item": [
+				{
+					"name": "Get Exported Event",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/export/event",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"export",
+								"event"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Exported Booking By ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BaseUrl}}/api/export/booking/:id",
+							"host": [
+								"{{BaseUrl}}"
+							],
+							"path": [
+								"api",
+								"export",
+								"booking",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": ""
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

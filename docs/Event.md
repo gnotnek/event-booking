@@ -1,8 +1,11 @@
 # Event Management Documentation
 Some endpoints just accessible by admin account, the usual user just can see all the listed event
+
+# Admin Only
+
 ## Create New Event
 
-<details>
+
 
 ### Endpoint
 
@@ -59,11 +62,11 @@ curl -X POST http://yourhostdomain.com/api/event \
 }
 ```
 
-</details>
+
 
 ## Get All Event
 
-<details>
+
 
 ### Endpoint
 
@@ -99,11 +102,11 @@ curl -X GET http://yourhostdomain.com/api/event \
 }
 ```
 
-</details>
+
 
 ## Get Event by ID
 
-<details>
+
 
 ### Endpoint
 
@@ -139,11 +142,11 @@ curl -X GET http://yourhostdomain.com/api/event/391ced0f-26b6-4bc3-8019-d8dc8050
 }
 ```
 
-</details>
+
 
 ## Edit Event
 
-<details>
+
 
 ### Endpoint
 
@@ -205,11 +208,11 @@ curl -X POST http://yourhostdomain.com/api/event/391ced0f-26b6-4bc3-8019-d8dc805
 }
 ```
 
-</details>
+
 
 ## Delete Event
 
-<details>
+
 
 ### Endpoint
 
@@ -236,4 +239,87 @@ curl -X POST http://yourhostdomain.com/api/event/391ced0f-26b6-4bc3-8019-d8dc805
 }
 ```
 
-</details>
+
+
+<br />
+
+# Not Admin Access
+## Get All Event
+
+
+
+### Endpoint
+
+```http
+GET /api/event
+```
+
+### Example cURL
+
+```sh
+curl -X GET http://yourhostdomain.com/api/event \
+-H "Content-Type: application/json"
+```
+
+### Example Response
+
+```json
+{
+    "events": [
+        {
+            "id": "391ced0f-26b6-4bc3-8019-d8dc805051bf",
+            "name": "Tech Conference 2023",
+            "location": "San Francisco, CA",
+            "start_date": "2023-11-01T16:00:00+07:00",
+            "end_date": "2023-11-04T00:00:00+07:00",
+            "price": 299.99,
+            "total_seat": 500,
+            "available_seat": 150,
+            "CreatedAt": "2024-11-12T14:46:35.843218+07:00",
+            "UpdatedAt": "2024-11-12T14:46:35.843218+07:00",
+        }
+    ]
+}
+```
+
+
+
+## Get Event by ID
+
+
+
+### Endpoint
+
+```http
+GET /api/event/:id
+```
+
+| Params | Type     | Description                |
+| :-------- | :------- | :------------------------- |
+| `id` | `string` | **Required** Event ID |
+
+### Example cURL
+
+```sh
+curl -X GET http://yourhostdomain.com/api/event/391ced0f-26b6-4bc3-8019-d8dc805051bf \
+-H "Content-Type: application/json"
+```
+
+### Example Response
+
+```json
+{
+    "id": "391ced0f-26b6-4bc3-8019-d8dc805051bf",
+    "name": "Tech Conference 2023",
+    "location": "San Francisco, CA",
+    "start_date": "2023-11-01T16:00:00+07:00",
+    "end_date": "2023-11-04T00:00:00+07:00",
+    "price": 299.99,
+    "total_seat": 500,
+    "available_seat": 150,
+    "CreatedAt": "2024-11-12T14:46:35.843218+07:00",
+    "UpdatedAt": "2024-11-12T14:46:35.843218+07:00"
+}
+```
+
+

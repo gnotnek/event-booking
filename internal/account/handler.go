@@ -2,6 +2,7 @@ package account
 
 import (
 	"event-booking/internal/api/responses"
+	"event-booking/internal/api/validator"
 	"event-booking/internal/auth"
 	"event-booking/internal/entity"
 	"time"
@@ -10,28 +11,34 @@ import (
 )
 
 type httpHandler struct {
-	svc *Service
-	jwt auth.Auth
+	svc       *Service
+	jwt       auth.Auth
+	validator *validator.Validator
 }
 
-func NewHttpHandler(svc *Service, jwt auth.Auth) *httpHandler {
+func NewHttpHandler(svc *Service, jwt auth.Auth, validator *validator.Validator) *httpHandler {
 	return &httpHandler{
-		svc: svc,
-		jwt: jwt,
+		svc:       svc,
+		jwt:       jwt,
+		validator: validator,
 	}
 }
 
 type SignUpPayload struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Role     string `json:"role" default:"user"`
+	Name     string `json:"name" validate:"required,min=3,max=50,regexp=^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=6,max=50"`
+	Role     string `json:"role" validate:"omitempty,oneof=admin user" default:"user"`
 }
 
 func (h *httpHandler) SignUpUserHandler(c *fiber.Ctx) error {
 	user := new(SignUpPayload)
 	if err := c.BodyParser(user); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
+	}
+
+	if err := h.validator.ValidateStruct(user); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse(err.Error()))
 	}
 
 	newUser := &entity.User{
@@ -53,14 +60,18 @@ func (h *httpHandler) SignUpUserHandler(c *fiber.Ctx) error {
 }
 
 type SignInPayload struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=6,max=50"`
 }
 
 func (h *httpHandler) SignInUserHandler(c *fiber.Ctx) error {
 	user := new(SignInPayload)
 	if err := c.BodyParser(user); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
+	}
+
+	if err := h.validator.ValidateStruct(user); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse(err.Error()))
 	}
 
 	userEntity := &entity.User{
@@ -136,10 +147,9 @@ func (h *httpHandler) RefreshTokenHandler(c *fiber.Ctx) error {
 }
 
 type UpdateUserPayload struct {
-	Name     string `json:"name"`
-	Email    string `json:"email"`
-	Password string `json:"password"`
-	Role     string `json:"role"`
+	Name     string `json:"name" validate:"required,min=3,max=50,regexp=^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$"`
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required,min=6,max=50"`
 }
 
 func (h *httpHandler) UpdateUserHandler(c *fiber.Ctx) error {
@@ -148,11 +158,14 @@ func (h *httpHandler) UpdateUserHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
 	}
 
+	if err := h.validator.ValidateStruct(user); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse(err.Error()))
+	}
+
 	newUser := &entity.User{
 		Name:     user.Name,
 		Email:    user.Email,
 		Password: user.Password,
-		Role:     user.Role,
 	}
 
 	err := h.svc.UpdateUserService(newUser)

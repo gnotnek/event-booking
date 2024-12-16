@@ -2,6 +2,7 @@ package event
 
 import (
 	"event-booking/internal/api/responses"
+	"event-booking/internal/api/validator"
 	"event-booking/internal/entity"
 	"time"
 
@@ -10,29 +11,35 @@ import (
 )
 
 type httpHandler struct {
-	svc *Service
+	svc       *Service
+	validator *validator.Validator
 }
 
-func NewHttpHandler(svc *Service) *httpHandler {
+func NewHttpHandler(svc *Service, validator *validator.Validator) *httpHandler {
 	return &httpHandler{
-		svc: svc,
+		svc:       svc,
+		validator: validator,
 	}
 }
 
 type EventInputPayload struct {
-	Name          string    `json:"name"`
-	Location      string    `json:"location"`
-	StartDate     time.Time `json:"start_date"`
-	EndDate       time.Time `json:"end_date"`
-	Price         float64   `json:"price"`
-	TotalSeat     int       `json:"total_seat"`
-	AvailableSeat int       `json:"available_seat"`
+	Name          string    `json:"name" validate:"required,min=3,max=50"`
+	Location      string    `json:"location" validate:"required,min=3,max=50"`
+	StartDate     time.Time `json:"start_date" validate:"required"`
+	EndDate       time.Time `json:"end_date" validate:"required"`
+	Price         float64   `json:"price" validate:"required"`
+	TotalSeat     int       `json:"total_seat" validate:"required"`
+	AvailableSeat int       `json:"available_seat" validate:"required"`
 }
 
 func (h *httpHandler) CreateEventHandler(c *fiber.Ctx) error {
 	event := new(EventInputPayload)
 	if err := c.BodyParser(event); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
+	}
+
+	if err := h.validator.ValidateStruct(event); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse(err.Error()))
 	}
 
 	newEvent := &entity.Event{
@@ -68,13 +75,13 @@ func (h *httpHandler) CreateEventHandler(c *fiber.Ctx) error {
 }
 
 type EventUpdatePayload struct {
-	Name          string    `json:"name"`
-	Location      string    `json:"location"`
-	StartDate     time.Time `json:"start_date"`
-	EndDate       time.Time `json:"end_date"`
-	Price         float64   `json:"price"`
-	TotalSeat     int       `json:"total_seat"`
-	AvailableSeat int       `json:"available_seat"`
+	Name          string    `json:"name" validate:"required,min=3,max=50"`
+	Location      string    `json:"location" validate:"required,min=3,max=50"`
+	StartDate     time.Time `json:"start_date" validate:"required"`
+	EndDate       time.Time `json:"end_date" validate:"required"`
+	Price         float64   `json:"price" validate:"required"`
+	TotalSeat     int       `json:"total_seat" validate:"required"`
+	AvailableSeat int       `json:"available_seat" validate:"required"`
 }
 
 func (h *httpHandler) SaveEventHandler(c *fiber.Ctx) error {
@@ -82,6 +89,10 @@ func (h *httpHandler) SaveEventHandler(c *fiber.Ctx) error {
 	event := new(EventUpdatePayload)
 	if err := c.BodyParser(event); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
+	}
+
+	if err := h.validator.ValidateStruct(event); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse(err.Error()))
 	}
 
 	eventData, err := h.svc.FindEventService(id)
