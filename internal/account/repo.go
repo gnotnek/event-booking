@@ -24,6 +24,14 @@ func (r *repo) CreateAccount(user *entity.User) error {
 	return nil
 }
 
+func (r *repo) UpdateUser(user *entity.User) error {
+	if err := r.db.Save(user).Error; err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (r *repo) FindByEmail(email string) (*entity.User, error) {
 	user := new(entity.User)
 	if err := r.db.Where("email = ?", email).First(user).Error; err != nil {

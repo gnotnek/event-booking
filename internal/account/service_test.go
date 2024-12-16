@@ -5,26 +5,40 @@ import (
 	"event-booking/internal/entity"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
 	"golang.org/x/crypto/bcrypt"
 )
 
 func TestSignUpUser(t *testing.T) {
 	mockRepo := mocks.NewRepository(t)
-	mockRepo.On("CreateAccount", mock.Anything).Return(nil).Once()
 
-	svc := NewService(mockRepo)
-	err := svc.SignUpUserService(&entity.User{
+	mockUser := &entity.User{
 		Email:    "johndoe@gmail.com",
 		Password: "password",
-	})
-
-	if err != nil {
-		t.Errorf("expected error to be nil; got %v", err)
 	}
 
-	mockRepo.AssertExpectations(t)
+	t.Run("sign up user successfully", func(t *testing.T) {
+		mockRepo.On("CreateAccount", mockUser).Return(nil).Once()
+
+		svc := NewService(mockRepo)
+		err := svc.SignUpUserService(mockUser)
+		if err != nil {
+			t.Errorf("expected error to be nil; got %v", err)
+		}
+
+		mockRepo.AssertExpectations(t)
+	})
+
+	t.Run("sign up user error", func(t *testing.T) {
+		mockRepo.On("CreateAccount", mockUser).Return(assert.AnError).Once()
+
+		svc := NewService(mockRepo)
+		err := svc.SignUpUserService(mockUser)
+		assert.Equal(t, assert.AnError, err)
+
+		mockRepo.AssertExpectations(t)
+	})
 }
 
 func TestSignInUserService(t *testing.T) {
@@ -88,4 +102,44 @@ func TestSignInUserService(t *testing.T) {
 			mockRepo.AssertExpectations(t)
 		})
 	}
+}
+
+func TestUpdateUserService(t *testing.T) {
+	mockRepo := mocks.NewRepository(t)
+
+	mockUser := &entity.User{
+		ID:       uuid.New(),
+		Email:    "johndoe@gmail.com",
+		Password: "password",
+	}
+
+	mockNewUser := &entity.User{
+		ID:       mockUser.ID,
+		Email:    "johndoe@gmail.com",
+		Password: "newpassword",
+	}
+
+	t.Run("update user successfully", func(t *testing.T) {
+		mockRepo.On("FindByEmail", mockUser.Email).Return(mockUser, nil).Once()
+		mockRepo.On("UpdateUser", mockNewUser).Return(nil).Once()
+
+		svc := NewService(mockRepo)
+		err := svc.UpdateUserService(mockNewUser)
+		if err != nil {
+			t.Errorf("expected error to be nil; got %v", err)
+		}
+
+		mockRepo.AssertExpectations(t)
+	})
+
+	t.Run("update user error", func(t *testing.T) {
+		mockRepo.On("FindByEmail", mockUser.Email).Return(mockUser, nil).Once()
+		mockRepo.On("UpdateUser", mockNewUser).Return(assert.AnError).Once()
+
+		svc := NewService(mockRepo)
+		err := svc.UpdateUserService(mockNewUser)
+		assert.Equal(t, assert.AnError, err)
+
+		mockRepo.AssertExpectations(t)
+	})
 }

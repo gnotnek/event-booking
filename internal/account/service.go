@@ -13,6 +13,7 @@ type Repository interface {
 	CreateAccount(user *entity.User) error
 	FindByEmail(email string) (*entity.User, error)
 	FindByID(id string) (*entity.User, error)
+	UpdateUser(user *entity.User) error
 }
 
 type Service struct {
@@ -35,6 +36,32 @@ func (s *Service) SignUpUserService(user *entity.User) error {
 	user.Password = string(hashedPassword)
 
 	err = s.repo.CreateAccount(user)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) UpdateUserService(user *entity.User) error {
+	userDB, err := s.repo.FindByEmail(user.Email)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return err
+	}
+
+	user.ID = userDB.ID
+
+	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return err
+	}
+
+	user.Password = string(hashedPassword)
+
+	err = s.repo.UpdateUser(user)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return err

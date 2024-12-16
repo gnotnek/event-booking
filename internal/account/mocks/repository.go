@@ -91,6 +91,24 @@ func (_m *Repository) FindByID(id string) (*entity.User, error) {
 	return r0, r1
 }
 
+// UpdateUser provides a mock function with given fields: user
+func (_m *Repository) UpdateUser(user *entity.User) error {
+	ret := _m.Called(user)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateUser")
+	}
+
+	var r0 error
+	if rf, ok := ret.Get(0).(func(*entity.User) error); ok {
+		r0 = rf(user)
+	} else {
+		r0 = ret.Error(0)
+	}
+
+	return r0
+}
+
 // NewRepository creates a new instance of Repository. It also registers a testing interface on the mock and a cleanup function to assert the mocks expectations.
 // The first argument is typically a *testing.T value.
 func NewRepository(t interface {

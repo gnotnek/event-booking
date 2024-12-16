@@ -117,3 +117,48 @@ func (h *httpHandler) GetUserByIDHandler(c *fiber.Ctx) error {
 		Data:    userDTO,
 	})
 }
+
+func (h *httpHandler) RefreshTokenHandler(c *fiber.Ctx) error {
+	token := c.Cookies("jwt")
+
+	newToken, err := h.jwt.RefreshToken(token)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
+	}
+
+	c.Cookie(&fiber.Cookie{
+		Name:    "jwt",
+		Value:   newToken,
+		Expires: time.Now().Add(time.Hour * 24),
+	})
+
+	return c.Status(fiber.StatusOK).JSON(responses.NewSuccessResponse("Token refreshed successfully"))
+}
+
+type UpdateUserPayload struct {
+	Name     string `json:"name"`
+	Email    string `json:"email"`
+	Password string `json:"password"`
+	Role     string `json:"role"`
+}
+
+func (h *httpHandler) UpdateUserHandler(c *fiber.Ctx) error {
+	user := new(UpdateUserPayload)
+	if err := c.BodyParser(user); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
+	}
+
+	newUser := &entity.User{
+		Name:     user.Name,
+		Email:    user.Email,
+		Password: user.Password,
+		Role:     user.Role,
+	}
+
+	err := h.svc.UpdateUserService(newUser)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
+	}
+
+	return c.Status(fiber.StatusOK).JSON(responses.NewSuccessResponse("User updated successfully"))
+}

@@ -14,6 +14,7 @@ type Auth interface {
 	ValidateToken(tokenString string) (*claims, error)
 	AuthRequired(c *fiber.Ctx) error
 	AdminRequired(c *fiber.Ctx) error
+	RefreshToken(tokenString string) (string, error)
 }
 
 type AuthService struct {
@@ -101,4 +102,13 @@ func (j *AuthService) AdminRequired(c *fiber.Ctx) error {
 	c.Locals("role", claims.Role)
 
 	return c.Next()
+}
+
+func (j *AuthService) RefreshToken(tokenString string) (string, error) {
+	claims, err := j.ValidateToken(tokenString)
+	if err != nil {
+		return "", err
+	}
+
+	return j.CreateToken(uuid.MustParse(claims.UserID), claims.Role)
 }

@@ -80,7 +80,9 @@ func NewServer() *Server {
 	app.Post("/api/signup", accountHandler.SignUpUserHandler)
 	app.Post("/api/signin", accountHandler.SignInUserHandler)
 	app.Post("/api/logout", accountHandler.SignOutUserHandler)
-	app.Get("/api/account/:id", middlewareService.AuthRequired, accountHandler.GetUserByIDHandler)
+	app.Post("/api/refresh", accountHandler.RefreshTokenHandler)
+	app.Put("/api/account", middlewareService.AdminRequired, accountHandler.UpdateUserHandler)
+	app.Get("/api/account/:id", middlewareService.AdminRequired, accountHandler.GetUserByIDHandler)
 
 	// Event Admin routes
 	app.Post("/api/admin/event", middlewareService.AdminRequired, eventHandler.CreateEventHandler)
