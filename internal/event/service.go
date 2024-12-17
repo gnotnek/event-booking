@@ -14,6 +14,7 @@ type Repository interface {
 	FindAll() ([]entity.Event, error)
 	Find(id string) (*entity.Event, error)
 	FindByName(name string) (*entity.Event, error)
+	FilterByCriteria(criteria map[string]interface{}) ([]entity.Event, error)
 	Delete(id string) error
 }
 
@@ -89,4 +90,14 @@ func (s *Service) DeleteEventService(id string) error {
 	}
 
 	return nil
+}
+
+func (s *Service) FilterEventService(criteria map[string]interface{}) ([]entity.Event, error) {
+	events, err := s.repo.FilterByCriteria(criteria)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return nil, err
+	}
+
+	return events, nil
 }

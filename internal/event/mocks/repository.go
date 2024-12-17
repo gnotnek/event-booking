@@ -61,6 +61,36 @@ func (_m *Repository) Delete(id string) error {
 	return r0
 }
 
+// FilterByCriteria provides a mock function with given fields: criteria
+func (_m *Repository) FilterByCriteria(criteria map[string]interface{}) ([]entity.Event, error) {
+	ret := _m.Called(criteria)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FilterByCriteria")
+	}
+
+	var r0 []entity.Event
+	var r1 error
+	if rf, ok := ret.Get(0).(func(map[string]interface{}) ([]entity.Event, error)); ok {
+		return rf(criteria)
+	}
+	if rf, ok := ret.Get(0).(func(map[string]interface{}) []entity.Event); ok {
+		r0 = rf(criteria)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]entity.Event)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(map[string]interface{}) error); ok {
+		r1 = rf(criteria)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Find provides a mock function with given fields: id
 func (_m *Repository) Find(id string) (*entity.Event, error) {
 	ret := _m.Called(id)

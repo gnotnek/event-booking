@@ -22,6 +22,7 @@ func TestCreateEvent(t *testing.T) {
 		Price:         100000,
 		TotalSeat:     100,
 		AvailableSeat: 100,
+		Category:      "Test Category",
 	}
 
 	t.Run("create event successfully", func(t *testing.T) {
@@ -70,6 +71,7 @@ func TestSaveEvent(t *testing.T) {
 		Price:         100000,
 		TotalSeat:     100,
 		AvailableSeat: 100,
+		Category:      "Test Category",
 	}
 
 	newEvent := &EventUpdatePayload{
@@ -80,6 +82,7 @@ func TestSaveEvent(t *testing.T) {
 		Price:         200000,
 		TotalSeat:     200,
 		AvailableSeat: 200,
+		Category:      "New Category",
 	}
 
 	t.Run("save event successfully", func(t *testing.T) {
@@ -118,6 +121,7 @@ func TestFindAllEvent(t *testing.T) {
 			Price:         100000,
 			TotalSeat:     100,
 			AvailableSeat: 100,
+			Category:      "Test Category",
 		},
 		{
 			ID:            uuid.New(),
@@ -128,6 +132,7 @@ func TestFindAllEvent(t *testing.T) {
 			Price:         200000,
 			TotalSeat:     200,
 			AvailableSeat: 200,
+			Category:      "Test Category 2",
 		},
 	}
 
@@ -168,6 +173,7 @@ func TestFindEvent(t *testing.T) {
 		Price:         100000,
 		TotalSeat:     100,
 		AvailableSeat: 100,
+		Category:      "Test Category",
 	}
 
 	t.Run("find event successfully", func(t *testing.T) {
@@ -207,6 +213,7 @@ func TestDeleteEvent(t *testing.T) {
 		Price:         100000,
 		TotalSeat:     100,
 		AvailableSeat: 100,
+		Category:      "Test Category",
 	}
 
 	t.Run("delete event successfully", func(t *testing.T) {

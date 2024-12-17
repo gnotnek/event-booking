@@ -15,6 +15,7 @@ type Event struct {
 	Price         float64   `json:"price"`
 	TotalSeat     int       `json:"total_seat"`
 	AvailableSeat int       `json:"available_seat"`
+	Category      string    `json:"category"`
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	Bookings      []Booking `gorm:"foreignKey:EventID"`

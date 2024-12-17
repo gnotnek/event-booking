@@ -4,6 +4,7 @@ import (
 	"event-booking/internal/api/responses"
 	"event-booking/internal/api/validator"
 	"event-booking/internal/entity"
+	"fmt"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -30,6 +31,7 @@ type EventInputPayload struct {
 	Price         float64   `json:"price" validate:"required"`
 	TotalSeat     int       `json:"total_seat" validate:"required"`
 	AvailableSeat int       `json:"available_seat" validate:"required"`
+	Category      string    `json:"category" validate:"required"`
 }
 
 func (h *httpHandler) CreateEventHandler(c *fiber.Ctx) error {
@@ -50,6 +52,7 @@ func (h *httpHandler) CreateEventHandler(c *fiber.Ctx) error {
 		Price:         event.Price,
 		TotalSeat:     event.TotalSeat,
 		AvailableSeat: event.AvailableSeat,
+		Category:      event.Category,
 	}
 
 	createdEvent, err := h.svc.CreateEventService(newEvent)
@@ -66,6 +69,7 @@ func (h *httpHandler) CreateEventHandler(c *fiber.Ctx) error {
 		Price:         createdEvent.Price,
 		TotalSeat:     createdEvent.TotalSeat,
 		AvailableSeat: createdEvent.AvailableSeat,
+		Category:      createdEvent.Category,
 	}
 
 	return c.Status(fiber.StatusCreated).JSON(responses.NewDataResponse(
@@ -82,6 +86,7 @@ type EventUpdatePayload struct {
 	Price         float64   `json:"price" validate:"required"`
 	TotalSeat     int       `json:"total_seat" validate:"required"`
 	AvailableSeat int       `json:"available_seat" validate:"required"`
+	Category      string    `json:"category" validate:"required"`
 }
 
 func (h *httpHandler) SaveEventHandler(c *fiber.Ctx) error {
@@ -114,6 +119,7 @@ func (h *httpHandler) SaveEventHandler(c *fiber.Ctx) error {
 		Price:         newEvent.Price,
 		TotalSeat:     newEvent.TotalSeat,
 		AvailableSeat: newEvent.AvailableSeat,
+		Category:      newEvent.Category,
 	}
 
 	return c.Status(fiber.StatusOK).JSON(responses.NewDataResponse(
@@ -139,6 +145,7 @@ func (h *httpHandler) FindAllEventHandler(c *fiber.Ctx) error {
 			Price:         event.Price,
 			TotalSeat:     event.TotalSeat,
 			AvailableSeat: event.AvailableSeat,
+			Category:      event.Category,
 		})
 	}
 
@@ -164,6 +171,7 @@ func (h *httpHandler) FindEventHandler(c *fiber.Ctx) error {
 		Price:         event.Price,
 		TotalSeat:     event.TotalSeat,
 		AvailableSeat: event.AvailableSeat,
+		Category:      event.Category,
 	}
 
 	return c.Status(fiber.StatusOK).JSON(responses.NewDataResponse(
@@ -187,4 +195,36 @@ func (h *httpHandler) DeleteEventHandler(c *fiber.Ctx) error {
 	}
 
 	return c.Status(fiber.StatusOK).JSON(responses.NewSuccessResponse("Event deleted successfully"))
+}
+
+func (h *httpHandler) FilterByCriteria(c *fiber.Ctx) error {
+	criteria := make(map[string]interface{})
+	criteria["name"] = c.Query("name")
+	criteria["location"] = c.Query("location")
+	criteria["category"] = c.Query("category")
+
+	events, err := h.svc.FilterEventService(criteria)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
+	}
+
+	var eventResponse []responses.EventResponseObject
+	for _, event := range events {
+		eventResponse = append(eventResponse, responses.EventResponseObject{
+			ID:            event.ID,
+			Name:          event.Name,
+			Location:      event.Location,
+			StartDate:     event.StartDate,
+			EndDate:       event.EndDate,
+			Price:         event.Price,
+			TotalSeat:     event.TotalSeat,
+			AvailableSeat: event.AvailableSeat,
+			Category:      event.Category,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(responses.NewDataResponse(
+		fmt.Sprintf("Events found based on criteria: %v", criteria),
+		eventResponse,
+	))
 }

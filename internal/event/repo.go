@@ -67,3 +67,12 @@ func (r *repo) Delete(id string) error {
 
 	return nil
 }
+
+func (r *repo) FilterByCriteria(criteria map[string]interface{}) ([]entity.Event, error) {
+	var events []entity.Event
+	if err := r.db.Where(criteria).Find(&events).Error; err != nil {
+		return nil, err
+	}
+
+	return events, nil
+}
