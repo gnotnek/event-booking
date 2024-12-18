@@ -19,4 +19,5 @@ type Event struct {
 	CreatedAt     time.Time
 	UpdatedAt     time.Time
 	Bookings      []Booking `gorm:"foreignKey:EventID"`
+	Reviews       []Review  `gorm:"foreignKey:EventID"`
 }

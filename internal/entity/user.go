@@ -15,4 +15,5 @@ type User struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Bookings  []Booking `gorm:"foreignKey:UserID"`
+	Reviews   []Review  `gorm:"foreignKey:UserID"`
 }

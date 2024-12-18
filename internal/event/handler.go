@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -100,9 +101,16 @@ func (h *httpHandler) SaveEventHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse(err.Error()))
 	}
 
-	eventData, err := h.svc.FindEventService(id)
-	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(responses.NewErrorResponse("Event not found"))
+	eventData := &entity.Event{
+		ID:            uuid.MustParse(id),
+		Name:          event.Name,
+		Location:      event.Location,
+		StartDate:     event.StartDate,
+		EndDate:       event.EndDate,
+		Price:         event.Price,
+		TotalSeat:     event.TotalSeat,
+		AvailableSeat: event.AvailableSeat,
+		Category:      event.Category,
 	}
 
 	newEvent, err := h.svc.SaveEventService(eventData, event)

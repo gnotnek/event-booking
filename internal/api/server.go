@@ -13,6 +13,7 @@ import (
 	"event-booking/internal/health"
 	"event-booking/internal/postgres"
 	"event-booking/internal/rabbitmq"
+	"event-booking/internal/review"
 	"fmt"
 	"os"
 	"os/signal"
@@ -61,6 +62,11 @@ func NewServer() *Server {
 	bookingSvc := booking.NewService(bookingRepo, eventRepo)
 	bookingHandler := booking.NewHttpHandler(bookingSvc, validatorService)
 
+	// Review
+	reviewRepo := review.NewRepository(db)
+	reviewSvc := review.NewService(reviewRepo)
+	reviewHandler := review.NewHttpHandler(reviewSvc, validatorService)
+
 	// Export
 	exportSvc := export.NewService(rabbitCon, eventRepo, bookingRepo)
 	exportHandler := export.NewHttpHandler(exportSvc)
@@ -108,6 +114,15 @@ func NewServer() *Server {
 	app.Get("/api/booking/:id", middleware.AuthRequired, bookingHandler.GetBookedEventByIDHandler)
 	app.Put("/api/booking/:id", middleware.AuthRequired, bookingHandler.UpdateBookedEventHandler)
 	app.Delete("/api/booking/:id", middleware.AuthRequired, bookingHandler.CancelBookedEventHandler)
+
+	// Review routes
+	app.Post("/api/review", middleware.AuthRequired, reviewHandler.CreateReviewHandler)
+	app.Get("/api/review", middleware.AuthRequired, reviewHandler.FindAllReviewHandler)
+	app.Get("/api/review/:id", middleware.AuthRequired, reviewHandler.FindReviewHandler)
+	app.Get("/api/review/event/:id", middleware.AuthRequired, reviewHandler.FindReviewByEventIDHandler)
+	app.Get("/api/review/user/:id", middleware.AuthRequired, reviewHandler.FindReviewByUserIDHandler)
+	app.Put("/api/review/:id", middleware.AuthRequired, reviewHandler.UpdateReviewHandler)
+	app.Delete("/api/review/:id", middleware.AuthRequired, reviewHandler.DeleteReviewHandler)
 
 	// Export routes
 	app.Get("/api/export/event", middleware.AdminRequired, exportHandler.ExportAllEventHandler)

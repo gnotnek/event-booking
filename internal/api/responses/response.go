@@ -48,6 +48,16 @@ type EventResponseObject struct {
 	Category      string    `json:"category"`
 }
 
+type ReviewResponseObject struct {
+	ID        uuid.UUID `json:"id"`
+	EventID   int       `json:"event_id"`
+	UserID    int       `json:"user_id"`
+	Review    string    `json:"review"`
+	Rating    int       `json:"rating"`
+	CreatedAt time.Time `json:"created_at"`
+	UpdatedAt time.Time `json:"updated_at"`
+}
+
 func NewSuccessResponse(message string) *SuccessResponse {
 	return &SuccessResponse{
 		Message: message,
