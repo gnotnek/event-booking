@@ -9,8 +9,8 @@ build:
 	go build -o tmp/bin/app.exe main.go
 
 .PHONY: run
-run: build
-	./tmp/bin/app $(bin)
+run: 
+	./tmp/bin/app api
 
 .PHONY: run/live
 run/live:
