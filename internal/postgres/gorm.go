@@ -28,5 +28,6 @@ func NewGORM(c config.Database) *gorm.DB {
 	sqlDB.SetMaxOpenConns(100)
 	sqlDB.SetConnMaxLifetime(time.Hour)
 
+	log.Info().Msg("database connection established")
 	return db
 }

@@ -8,8 +8,8 @@ build:
 	mkdir -p tmp/bin
 	go build -o tmp/bin/app.exe main.go
 
-.PHONY: run
-run: 
+.PHONY: run-api
+run-api: 
 	./tmp/bin/app api
 
 .PHONY: run/live

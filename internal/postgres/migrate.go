@@ -12,4 +12,6 @@ func Migrate(db *gorm.DB) {
 	if err != nil {
 		log.Fatal().Err(err).Msg("could not migrate database")
 	}
+
+	log.Info().Msg("database migration successful")
 }
