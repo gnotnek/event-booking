@@ -228,3 +228,52 @@ func (h *httpHandler) FilterByCriteria(c *fiber.Ctx) error {
 		eventResponse,
 	))
 }
+
+type CustomEventBookingsResponse struct {
+	responses.EventResponseObject
+	Bookings []responses.BookingResponseObject `json:"bookings"`
+}
+
+func (h *httpHandler) GetEventBookingsHandler(c *fiber.Ctx) error {
+	id := c.Params("id")
+	if id == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
+	}
+
+	event, err := h.svc.GetEventBookingsService(id)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
+	}
+
+	res := CustomEventBookingsResponse{
+		EventResponseObject: responses.EventResponseObject{
+			ID:            event.ID,
+			Name:          event.Name,
+			Location:      event.Location,
+			StartDate:     event.StartDate,
+			EndDate:       event.EndDate,
+			Price:         event.Price,
+			TotalSeat:     event.TotalSeat,
+			AvailableSeat: event.AvailableSeat,
+			Category:      event.Category,
+		},
+	}
+
+	for _, booking := range event.Bookings {
+		res.Bookings = append(res.Bookings, responses.BookingResponseObject{
+			ID:         booking.ID,
+			UserID:     booking.UserID,
+			EventID:    booking.EventID,
+			Quantity:   booking.Quantity,
+			TotalPrice: booking.TotalPrice,
+			CreatedAt:  booking.CreatedAt,
+			UpdatedAt:  booking.UpdatedAt,
+		})
+	}
+
+	return c.Status(fiber.StatusOK).JSON(responses.NewDataResponse(
+		"Event bookings found",
+		res,
+	))
+
+}

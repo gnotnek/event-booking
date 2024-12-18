@@ -12,11 +12,11 @@ import (
 
 type httpHandler struct {
 	svc       *Service
-	jwt       auth.Auth
+	jwt       *auth.JwtService
 	validator *validator.Validator
 }
 
-func NewHttpHandler(svc *Service, jwt auth.Auth, validator *validator.Validator) *httpHandler {
+func NewHttpHandler(svc *Service, jwt *auth.JwtService, validator *validator.Validator) *httpHandler {
 	return &httpHandler{
 		svc:       svc,
 		jwt:       jwt,
@@ -25,7 +25,7 @@ func NewHttpHandler(svc *Service, jwt auth.Auth, validator *validator.Validator)
 }
 
 type SignUpPayload struct {
-	Name     string `json:"name" validate:"required,min=3,max=50,regexp=^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$"`
+	Name     string `json:"name" validate:"required,min=3,max=50,name"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=6,max=50"`
 	Role     string `json:"role" validate:"omitempty,oneof=admin user" default:"user"`
@@ -147,7 +147,7 @@ func (h *httpHandler) RefreshTokenHandler(c *fiber.Ctx) error {
 }
 
 type UpdateUserPayload struct {
-	Name     string `json:"name" validate:"required,min=3,max=50,regexp=^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$"`
+	Name     string `json:"name" validate:"required,min=3,max=50,name"`
 	Email    string `json:"email" validate:"required,email"`
 	Password string `json:"password" validate:"required,min=6,max=50"`
 }

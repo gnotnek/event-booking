@@ -35,7 +35,8 @@ func NewServer() *Server {
 	rabbitCon := rabbitmq.InitRabbitMQ(&cfg.RabbitMQ)
 
 	// middleware
-	middlewareService := auth.NewAuthService(cfg.App.JwtSecretKey)
+	jwtService := auth.NewJwtService(cfg.App.JwtSecretKey)
+	middleware := auth.NewMiddleware(jwtService)
 
 	// validator
 	validatorService := validator.NewValidator()
@@ -48,7 +49,7 @@ func NewServer() *Server {
 	// Account
 	accountRepo := account.NewRepository(db)
 	accountSvc := account.NewService(accountRepo)
-	accountHandler := account.NewHttpHandler(accountSvc, middlewareService, validatorService)
+	accountHandler := account.NewHttpHandler(accountSvc, jwtService, validatorService)
 
 	// Event
 	eventRepo := event.NewRepository(db)
@@ -85,30 +86,32 @@ func NewServer() *Server {
 	app.Post("/api/signin", accountHandler.SignInUserHandler)
 	app.Post("/api/logout", accountHandler.SignOutUserHandler)
 	app.Post("/api/refresh", accountHandler.RefreshTokenHandler)
-	app.Put("/api/account", middlewareService.AdminRequired, accountHandler.UpdateUserHandler)
-	app.Get("/api/account/:id", middlewareService.AdminRequired, accountHandler.GetUserByIDHandler)
+	app.Put("/api/account", middleware.AdminRequired, accountHandler.UpdateUserHandler)
+	app.Get("/api/account/:id", middleware.AdminRequired, accountHandler.GetUserByIDHandler)
 
 	// Event Admin routes
-	app.Post("/api/admin/event", middlewareService.AdminRequired, eventHandler.CreateEventHandler)
-	app.Get("/api/admin/event", middlewareService.AdminRequired, eventHandler.FindAllEventHandler)
-	app.Get("/api/admin/event/:id", middlewareService.AdminRequired, eventHandler.FindEventHandler)
-	app.Put("/api/admin/event/:id", middlewareService.AdminRequired, eventHandler.SaveEventHandler)
-	app.Delete("/api/admin/event/:id", middlewareService.AdminRequired, eventHandler.DeleteEventHandler)
+	app.Post("/api/admin/event", middleware.AdminRequired, eventHandler.CreateEventHandler)
+	app.Get("/api/admin/event", middleware.AdminRequired, eventHandler.FindAllEventHandler)
+	app.Get("/api/admin/event/:id", middleware.AdminRequired, eventHandler.FindEventHandler)
+	app.Put("/api/admin/event/:id", middleware.AdminRequired, eventHandler.SaveEventHandler)
+	app.Delete("/api/admin/event/:id", middleware.AdminRequired, eventHandler.DeleteEventHandler)
+	app.Get("/api/admin/event/:id/bookings", middleware.AdminRequired, eventHandler.GetEventBookingsHandler)
 
 	// Event routes
-	app.Get("/api/event", middlewareService.AuthRequired, eventHandler.FindAllEventHandler)
-	app.Get("/api/event/:id", middlewareService.AuthRequired, eventHandler.FindEventHandler)
+	app.Get("/api/event", middleware.AuthRequired, eventHandler.FindAllEventHandler)
+	app.Get("/api/event/:id", middleware.AuthRequired, eventHandler.FindEventHandler)
+	app.Get("/api/event/filter", middleware.AuthRequired, eventHandler.FilterByCriteria)
 
 	// Booking routes
-	app.Post("/api/booking", middlewareService.AuthRequired, bookingHandler.BookEventHandler)
-	app.Get("/api/booking", middlewareService.AuthRequired, bookingHandler.GetBookedEventsHandler)
-	app.Get("/api/booking/:id", middlewareService.AuthRequired, bookingHandler.GetBookedEventByIDHandler)
-	app.Put("/api/booking/:id", middlewareService.AuthRequired, bookingHandler.UpdateBookedEventHandler)
-	app.Delete("/api/booking/:id", middlewareService.AuthRequired, bookingHandler.CancelBookedEventHandler)
+	app.Post("/api/booking", middleware.AuthRequired, bookingHandler.BookEventHandler)
+	app.Get("/api/booking", middleware.AuthRequired, bookingHandler.GetBookedEventsHandler)
+	app.Get("/api/booking/:id", middleware.AuthRequired, bookingHandler.GetBookedEventByIDHandler)
+	app.Put("/api/booking/:id", middleware.AuthRequired, bookingHandler.UpdateBookedEventHandler)
+	app.Delete("/api/booking/:id", middleware.AuthRequired, bookingHandler.CancelBookedEventHandler)
 
 	// Export routes
-	app.Get("/api/export/event", middlewareService.AdminRequired, exportHandler.ExportAllEventHandler)
-	app.Get("/api/export/booking/:id", middlewareService.AdminRequired, exportHandler.ExportBookingHandler)
+	app.Get("/api/export/event", middleware.AdminRequired, exportHandler.ExportAllEventHandler)
+	app.Get("/api/export/booking/:id", middleware.AdminRequired, exportHandler.ExportBookingHandler)
 
 	return &Server{fiber: app}
 }

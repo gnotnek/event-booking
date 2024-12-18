@@ -181,6 +181,34 @@ func (_m *Repository) FindByName(name string) (*entity.Event, error) {
 	return r0, r1
 }
 
+// GetBookingsByEventID provides a mock function with given fields: eventID
+func (_m *Repository) GetBookingsByEventID(eventID string) (entity.Event, error) {
+	ret := _m.Called(eventID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetBookingsByEventID")
+	}
+
+	var r0 entity.Event
+	var r1 error
+	if rf, ok := ret.Get(0).(func(string) (entity.Event, error)); ok {
+		return rf(eventID)
+	}
+	if rf, ok := ret.Get(0).(func(string) entity.Event); ok {
+		r0 = rf(eventID)
+	} else {
+		r0 = ret.Get(0).(entity.Event)
+	}
+
+	if rf, ok := ret.Get(1).(func(string) error); ok {
+		r1 = rf(eventID)
+	} else {
+		r1 = ret.Error(1)
+	}
+
+	return r0, r1
+}
+
 // Save provides a mock function with given fields: _a0
 func (_m *Repository) Save(_a0 *entity.Event) (*entity.Event, error) {
 	ret := _m.Called(_a0)

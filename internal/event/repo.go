@@ -76,3 +76,12 @@ func (r *repo) FilterByCriteria(criteria map[string]interface{}) ([]entity.Event
 
 	return events, nil
 }
+
+func (r *repo) GetBookingsByEventID(eventID string) (entity.Event, error) {
+	var event entity.Event
+	if err := r.db.Preload("Bookings").Where("id = ?", eventID).First(&event).Error; err != nil {
+		return entity.Event{}, err
+	}
+
+	return event, nil
+}
