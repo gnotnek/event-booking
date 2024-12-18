@@ -11,10 +11,12 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
+//go:generate mockery --case snake --name EventRepository
 type EventRepository interface {
 	FindAll() ([]entity.Event, error)
 }
 
+//go:generate mockery --case snake --name BookingRepository
 type BookingRepository interface {
 	FindByUserID(userID string) ([]entity.Booking, error)
 }
