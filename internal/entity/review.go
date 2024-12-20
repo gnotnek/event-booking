@@ -8,8 +8,8 @@ import (
 
 type Review struct {
 	ID        uuid.UUID `json:"id" gorm:"type:uuid;primary_key;default:uuid_generate_v4()"`
-	EventID   int       `json:"event_id"`
-	UserID    int       `json:"user_id"`
+	EventID   uuid.UUID `json:"event_id"`
+	UserID    uuid.UUID `json:"user_id"`
 	Review    string    `json:"review"`
 	Rating    int       `json:"rating"`
 	CreatedAt time.Time

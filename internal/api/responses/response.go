@@ -50,8 +50,8 @@ type EventResponseObject struct {
 
 type ReviewResponseObject struct {
 	ID        uuid.UUID `json:"id"`
-	EventID   int       `json:"event_id"`
-	UserID    int       `json:"user_id"`
+	EventID   uuid.UUID `json:"event_id"`
+	UserID    uuid.UUID `json:"user_id"`
 	Review    string    `json:"review"`
 	Rating    int       `json:"rating"`
 	CreatedAt time.Time `json:"created_at"`

@@ -29,6 +29,7 @@ func NewService(repo Repository) *Service {
 func (s *Service) CreateReviewService(review *entity.Review) (*entity.Review, error) {
 	review, err := s.repo.Create(review)
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return nil, err
 	}
 
@@ -54,6 +55,7 @@ func (s *Service) SaveReviewService(review *entity.Review) (*entity.Review, erro
 func (s *Service) FindAllReviewService() ([]entity.Review, error) {
 	reviews, err := s.repo.FindAll()
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return nil, err
 	}
 
@@ -63,6 +65,7 @@ func (s *Service) FindAllReviewService() ([]entity.Review, error) {
 func (s *Service) FindReviewService(id string) (*entity.Review, error) {
 	review, err := s.repo.Find(id)
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return nil, err
 	}
 
@@ -72,6 +75,7 @@ func (s *Service) FindReviewService(id string) (*entity.Review, error) {
 func (s *Service) FindReviewByEventIDService(eventID string) ([]entity.Review, error) {
 	reviews, err := s.repo.FindByEventID(eventID)
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return nil, err
 	}
 
@@ -81,6 +85,7 @@ func (s *Service) FindReviewByEventIDService(eventID string) ([]entity.Review, e
 func (s *Service) FindReviewByUserIDService(userID string) ([]entity.Review, error) {
 	reviews, err := s.repo.FindByUserID(userID)
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return nil, err
 	}
 
@@ -90,6 +95,7 @@ func (s *Service) FindReviewByUserIDService(userID string) ([]entity.Review, err
 func (s *Service) DeleteReviewService(id string) error {
 	err := s.repo.Delete(id)
 	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
 		return err
 	}
 

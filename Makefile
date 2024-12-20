@@ -12,6 +12,10 @@ build:
 run-api: 
 	./tmp/bin/app api
 
+.PHONY: run-dev
+run-dev: 
+	go run . api
+
 .PHONY: run/live
 run/live:
 	go run github.com/cosmtrek/air@v1.43.0 \

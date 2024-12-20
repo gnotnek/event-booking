@@ -21,15 +21,15 @@ func NewHttpHandler(svc *Service, validator *validator.Validator) *httpHandler {
 	}
 }
 
-type ReviewInputPayload struct {
-	EventID int    `json:"event_id" validate:"required"`
-	UserID  int    `json:"user_id" validate:"required"`
-	Review  string `json:"review" validate:"required"`
-	Rating  int    `json:"rating" validate:"required,min=1,max=5"`
+type ReviewPayload struct {
+	EventID uuid.UUID `json:"event_id" validate:"required"`
+	UserID  uuid.UUID `json:"user_id" validate:"required"`
+	Review  string    `json:"review" validate:"required"`
+	Rating  int       `json:"rating" validate:"required,min=1,max=5"`
 }
 
 func (h *httpHandler) CreateReviewHandler(c *fiber.Ctx) error {
-	review := new(ReviewInputPayload)
+	review := new(ReviewPayload)
 	if err := c.BodyParser(review); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
 	}
@@ -65,7 +65,7 @@ func (h *httpHandler) CreateReviewHandler(c *fiber.Ctx) error {
 
 func (h *httpHandler) UpdateReviewHandler(c *fiber.Ctx) error {
 	id := c.Params("id")
-	review := new(ReviewInputPayload)
+	review := new(ReviewPayload)
 	if err := c.BodyParser(review); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
 	}
@@ -142,16 +142,34 @@ func (h *httpHandler) FindReviewHandler(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(responses.NewDataResponse("Review found", reviewResponse))
 }
 
+type CustomReviewEventResponse struct {
+	Event   responses.EventResponseObject    `json:"event"`
+	Reviews []responses.ReviewResponseObject `json:"reviews"`
+}
+
 func (h *httpHandler) FindReviewByEventIDHandler(c *fiber.Ctx) error {
-	eventID := c.Params("event_id")
+	eventID := c.Params("id")
 	reviews, err := h.svc.FindReviewByEventIDService(eventID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse(err.Error()))
 	}
 
-	var reviewResponses []responses.ReviewResponseObject
+	res := CustomReviewEventResponse{
+		Event: responses.EventResponseObject{
+			ID:            reviews[0].Event.ID,
+			Name:          reviews[0].Event.Name,
+			Location:      reviews[0].Event.Location,
+			StartDate:     reviews[0].Event.StartDate,
+			EndDate:       reviews[0].Event.EndDate,
+			Price:         reviews[0].Event.Price,
+			TotalSeat:     reviews[0].Event.TotalSeat,
+			AvailableSeat: reviews[0].Event.AvailableSeat,
+			Category:      reviews[0].Event.Category,
+		},
+	}
+
 	for _, review := range reviews {
-		reviewResponses = append(reviewResponses, responses.ReviewResponseObject{
+		res.Reviews = append(res.Reviews, responses.ReviewResponseObject{
 			ID:        review.ID,
 			EventID:   review.EventID,
 			UserID:    review.UserID,
@@ -162,19 +180,32 @@ func (h *httpHandler) FindReviewByEventIDHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(responses.NewDataResponse("Reviews found", reviewResponses))
+	return c.Status(fiber.StatusOK).JSON(responses.NewDataResponse("Reviews found", res))
+}
+
+type CustomReviewUserResponse struct {
+	User    responses.UserResponseObject     `json:"user"`
+	Reviews []responses.ReviewResponseObject `json:"reviews"`
 }
 
 func (h *httpHandler) FindReviewByUserIDHandler(c *fiber.Ctx) error {
-	userID := c.Params("user_id")
+	userID := c.Params("id")
 	reviews, err := h.svc.FindReviewByUserIDService(userID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse(err.Error()))
 	}
 
-	var reviewResponses []responses.ReviewResponseObject
+	res := CustomReviewUserResponse{
+		User: responses.UserResponseObject{
+			ID:    reviews[0].User.ID,
+			Name:  reviews[0].User.Name,
+			Email: reviews[0].User.Email,
+			Role:  reviews[0].User.Role,
+		},
+	}
+
 	for _, review := range reviews {
-		reviewResponses = append(reviewResponses, responses.ReviewResponseObject{
+		res.Reviews = append(res.Reviews, responses.ReviewResponseObject{
 			ID:        review.ID,
 			EventID:   review.EventID,
 			UserID:    review.UserID,
@@ -185,7 +216,7 @@ func (h *httpHandler) FindReviewByUserIDHandler(c *fiber.Ctx) error {
 		})
 	}
 
-	return c.Status(fiber.StatusOK).JSON(responses.NewDataResponse("Reviews found", reviewResponses))
+	return c.Status(fiber.StatusOK).JSON(responses.NewDataResponse("Reviews found", res))
 }
 
 func (h *httpHandler) DeleteReviewHandler(c *fiber.Ctx) error {

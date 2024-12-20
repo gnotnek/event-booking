@@ -52,7 +52,7 @@ func (r *repo) Find(id string) (*entity.Review, error) {
 
 func (r *repo) FindByEventID(eventID string) ([]entity.Review, error) {
 	var reviews []entity.Review
-	if err := r.db.Where("event_id = ?", eventID).Find(&reviews).Error; err != nil {
+	if err := r.db.Preload("Event").Where("event_id = ?", eventID).Find(&reviews).Error; err != nil {
 		return nil, err
 	}
 
@@ -61,7 +61,7 @@ func (r *repo) FindByEventID(eventID string) ([]entity.Review, error) {
 
 func (r *repo) FindByUserID(userID string) ([]entity.Review, error) {
 	var reviews []entity.Review
-	if err := r.db.Where("user_id = ?", userID).Find(&reviews).Error; err != nil {
+	if err := r.db.Preload("User").Where("user_id = ?", userID).Find(&reviews).Error; err != nil {
 		return nil, err
 	}
 
