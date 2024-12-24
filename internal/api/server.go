@@ -93,13 +93,13 @@ func NewServer() *Server {
 
 	// Account routes
 	app.Post("/api/signup", accountHandler.SignUpUserHandler)
+	app.Post("/api/account/send-verification", accountHandler.RequestVerificationCodeHandler)
+	app.Post("/api/account/validate", accountHandler.ValidateVerificationCodeHandler)
 	app.Post("/api/signin", accountHandler.SignInUserHandler)
 	app.Post("/api/logout", accountHandler.SignOutUserHandler)
 	app.Post("/api/refresh", accountHandler.RefreshTokenHandler)
 	app.Put("/api/account", middleware.AdminRequired, accountHandler.UpdateUserHandler)
 	app.Get("/api/account/:id", middleware.AdminRequired, accountHandler.GetUserByIDHandler)
-	app.Post("/api/account/send-verification", accountHandler.RequestVerificationCodeHandler)
-	app.Post("/api/account/validate", accountHandler.ValidateVerificationCodeHandler)
 
 	// Event Admin routes
 	app.Post("/api/admin/event", middleware.AdminRequired, eventHandler.CreateEventHandler)
