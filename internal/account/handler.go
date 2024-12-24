@@ -199,7 +199,7 @@ func (h *httpHandler) RequestVerificationCodeHandler(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
 	}
 
-	return c.Status(fiber.StatusOK).JSON(responses.NewSuccessResponse("Verification code sent successfully"))
+	return c.Status(fiber.StatusOK).JSON(responses.NewSuccessResponse("Verification code sent to your email successfully"))
 }
 
 type ValidateVerificationCodePayload struct {
