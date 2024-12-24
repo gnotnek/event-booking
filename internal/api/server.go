@@ -98,6 +98,8 @@ func NewServer() *Server {
 	app.Post("/api/refresh", accountHandler.RefreshTokenHandler)
 	app.Put("/api/account", middleware.AdminRequired, accountHandler.UpdateUserHandler)
 	app.Get("/api/account/:id", middleware.AdminRequired, accountHandler.GetUserByIDHandler)
+	app.Post("/api/account/send-verification", accountHandler.RequestVerificationCodeHandler)
+	app.Post("/api/account/verify", accountHandler.RequestVerificationCodeHandler)
 
 	// Event Admin routes
 	app.Post("/api/admin/event", middleware.AdminRequired, eventHandler.CreateEventHandler)

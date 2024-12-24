@@ -102,8 +102,8 @@ func (s *Service) FindByIDService(id string) (*entity.User, error) {
 	return user, nil
 }
 
-func (s *Service) GenerateVerificationCode(user *entity.User) error {
-	user, err := s.repo.FindByEmail(user.Email)
+func (s *Service) GenerateVerificationCode(email string) error {
+	user, err := s.repo.FindByEmail(email)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return err

@@ -175,3 +175,44 @@ func (h *httpHandler) UpdateUserHandler(c *fiber.Ctx) error {
 
 	return c.Status(fiber.StatusOK).JSON(responses.NewSuccessResponse("User updated successfully"))
 }
+
+type RequestVerificationCodePayload struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
+func (h *httpHandler) RequestVerificationCodeHandler(c *fiber.Ctx) error {
+	email := new(RequestVerificationCodePayload)
+	if err := c.BodyParser(email); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
+	}
+
+	if err := h.validator.ValidateStruct(email); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse(err.Error()))
+	}
+
+	err := h.svc.GenerateVerificationCode(email.Email)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
+	}
+
+	return c.Status(fiber.StatusOK).JSON(responses.NewSuccessResponse("Verification code sent successfully"))
+}
+
+type ValidateVerificationCodePayload struct {
+	Code  string `json:"code" validate:"required,len=6"`
+	Email string `json:"email" validate:"required,email"`
+}
+
+func (s *Service) ValidateVerificationCodeHandler(c *fiber.Ctx) error {
+	var payload ValidateVerificationCodePayload
+	if err := c.BodyParser(&payload); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
+	}
+
+	err := s.ValidateVerificationCode(payload.Email, payload.Code)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
+	}
+
+	return c.Status(fiber.StatusOK).JSON(responses.NewSuccessResponse("Verification code validated successfully"))
+}
