@@ -89,6 +89,10 @@ func (s *Service) SignInUserService(user *entity.User) (*entity.User, error) {
 		return nil, err
 	}
 
+	if !userDB.IsVerified {
+		return nil, fmt.Errorf("user is not verified")
+	}
+
 	return userDB, nil
 }
 
@@ -149,6 +153,7 @@ func (s *Service) ValidateVerificationCode(email, code string) error {
 		}
 	}
 
+	user.IsVerified = true
 	user.EmailVerificationCode = ""
 	user.VerificationExpiry = time.Time{}
 	user.VerificationAttemptsLeft = 0

@@ -81,7 +81,11 @@ func (h *httpHandler) SignInUserHandler(c *fiber.Ctx) error {
 
 	authenticatedUser, err := h.svc.SignInUserService(userEntity)
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(responses.NewErrorResponse("Unauthorized"))
+		if err.Error() == "user is not verified" {
+			return c.Status(fiber.StatusUnauthorized).JSON(responses.NewErrorResponse("Please verify your email"))
+		} else {
+			return c.Status(fiber.StatusUnauthorized).JSON(responses.NewErrorResponse("Invalid email or password"))
+		}
 	}
 
 	token, err := h.jwt.CreateToken(authenticatedUser.ID, authenticatedUser.Role)
@@ -203,13 +207,13 @@ type ValidateVerificationCodePayload struct {
 	Email string `json:"email" validate:"required,email"`
 }
 
-func (s *Service) ValidateVerificationCodeHandler(c *fiber.Ctx) error {
+func (h *httpHandler) ValidateVerificationCodeHandler(c *fiber.Ctx) error {
 	var payload ValidateVerificationCodePayload
 	if err := c.BodyParser(&payload); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(responses.NewErrorResponse("Bad Request"))
 	}
 
-	err := s.ValidateVerificationCode(payload.Email, payload.Code)
+	err := h.svc.ValidateVerificationCode(payload.Email, payload.Code)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(responses.NewErrorResponse("Internal Server Error"))
 	}

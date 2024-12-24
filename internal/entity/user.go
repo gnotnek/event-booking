@@ -15,6 +15,7 @@ type User struct {
 	EmailVerificationCode    string    `json:"email_verification_code"`
 	VerificationExpiry       time.Time `json:"verification_expiry"`
 	VerificationAttemptsLeft int       `json:"verification_attempts_left" gorm:"default:3"`
+	IsVerified               bool      `json:"is_verified" gorm:"default:false"`
 	CreatedAt                time.Time
 	UpdatedAt                time.Time
 	Bookings                 []Booking `gorm:"foreignKey:UserID"`
