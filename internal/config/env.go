@@ -25,6 +25,7 @@ type Config struct {
 	App      App
 	Database Database
 	RabbitMQ RabbitMQ
+	Smtp     Smtp
 }
 
 type App struct {
@@ -41,6 +42,14 @@ type Database struct {
 
 type RabbitMQ struct {
 	Url string `env:"RABBITMQ_URL"`
+}
+
+type Smtp struct {
+	SmtpHost  string `env:"SMTP_HOST"`
+	SmtpPort  int    `env:"SMTP_PORT"`
+	Username  string `env:"SMTP_USERNAME"`
+	Password  string `env:"SMTP_PASSWORD"`
+	FromEmail string `env:"SMTP_FROM_EMAIL"`
 }
 
 func (d Database) DataSourceName() string {

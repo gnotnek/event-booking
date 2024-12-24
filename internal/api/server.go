@@ -8,6 +8,7 @@ import (
 	"event-booking/internal/auth"
 	"event-booking/internal/booking"
 	"event-booking/internal/config"
+	"event-booking/internal/email"
 	"event-booking/internal/event"
 	"event-booking/internal/export"
 	"event-booking/internal/health"
@@ -32,6 +33,9 @@ func NewServer() *Server {
 	db := postgres.NewGORM(cfg.Database)
 	postgres.Migrate(db)
 
+	// Email Service
+	emailService := email.NewEmailService(&cfg.Smtp)
+
 	// RabbitMQ
 	rabbitCon := rabbitmq.InitRabbitMQ(&cfg.RabbitMQ)
 
@@ -49,7 +53,7 @@ func NewServer() *Server {
 
 	// Account
 	accountRepo := account.NewRepository(db)
-	accountSvc := account.NewService(accountRepo)
+	accountSvc := account.NewService(accountRepo, emailService)
 	accountHandler := account.NewHttpHandler(accountSvc, jwtService, validatorService)
 
 	// Event

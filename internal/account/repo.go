@@ -24,7 +24,7 @@ func (r *repo) CreateAccount(user *entity.User) error {
 	return nil
 }
 
-func (r *repo) UpdateUser(user *entity.User) error {
+func (r *repo) SaveUser(user *entity.User) error {
 	if err := r.db.Save(user).Error; err != nil {
 		return err
 	}

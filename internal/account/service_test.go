@@ -21,7 +21,7 @@ func TestSignUpUser(t *testing.T) {
 	t.Run("sign up user successfully", func(t *testing.T) {
 		mockRepo.On("CreateAccount", mockUser).Return(nil).Once()
 
-		svc := NewService(mockRepo)
+		svc := NewService(mockRepo, nil)
 		err := svc.SignUpUserService(mockUser)
 		if err != nil {
 			t.Errorf("expected error to be nil; got %v", err)
@@ -33,7 +33,7 @@ func TestSignUpUser(t *testing.T) {
 	t.Run("sign up user error", func(t *testing.T) {
 		mockRepo.On("CreateAccount", mockUser).Return(assert.AnError).Once()
 
-		svc := NewService(mockRepo)
+		svc := NewService(mockRepo, nil)
 		err := svc.SignUpUserService(mockUser)
 		assert.Equal(t, assert.AnError, err)
 
@@ -89,7 +89,7 @@ func TestSignInUserService(t *testing.T) {
 			mockRepo := mocks.NewRepository(t)
 			mockRepo.On("FindByEmail", tt.email).Return(tt.mockReturn, tt.mockError).Once()
 
-			svc := NewService(mockRepo)
+			svc := NewService(mockRepo, nil)
 			_, err := svc.SignInUserService(&entity.User{
 				Email:    tt.email,
 				Password: tt.password,
@@ -123,7 +123,7 @@ func TestUpdateUserService(t *testing.T) {
 		mockRepo.On("FindByEmail", mockUser.Email).Return(mockUser, nil).Once()
 		mockRepo.On("UpdateUser", mockNewUser).Return(nil).Once()
 
-		svc := NewService(mockRepo)
+		svc := NewService(mockRepo, nil)
 		err := svc.UpdateUserService(mockNewUser)
 		if err != nil {
 			t.Errorf("expected error to be nil; got %v", err)
@@ -136,7 +136,7 @@ func TestUpdateUserService(t *testing.T) {
 		mockRepo.On("FindByEmail", mockUser.Email).Return(mockUser, nil).Once()
 		mockRepo.On("UpdateUser", mockNewUser).Return(assert.AnError).Once()
 
-		svc := NewService(mockRepo)
+		svc := NewService(mockRepo, nil)
 		err := svc.UpdateUserService(mockNewUser)
 		assert.Equal(t, assert.AnError, err)
 

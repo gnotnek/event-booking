@@ -91,12 +91,12 @@ func (_m *Repository) FindByID(id string) (*entity.User, error) {
 	return r0, r1
 }
 
-// UpdateUser provides a mock function with given fields: user
-func (_m *Repository) UpdateUser(user *entity.User) error {
+// SaveUser provides a mock function with given fields: user
+func (_m *Repository) SaveUser(user *entity.User) error {
 	ret := _m.Called(user)
 
 	if len(ret) == 0 {
-		panic("no return value specified for UpdateUser")
+		panic("no return value specified for SaveUser")
 	}
 
 	var r0 error

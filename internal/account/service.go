@@ -1,10 +1,14 @@
 package account
 
 import (
+	"event-booking/internal/email"
 	"event-booking/internal/entity"
+	"fmt"
+	"time"
 
 	"github.com/rs/zerolog/log"
 	"golang.org/x/crypto/bcrypt"
+	"golang.org/x/exp/rand"
 )
 
 //go:generate mockery --case snake --name Repository
@@ -13,16 +17,18 @@ type Repository interface {
 	CreateAccount(user *entity.User) error
 	FindByEmail(email string) (*entity.User, error)
 	FindByID(id string) (*entity.User, error)
-	UpdateUser(user *entity.User) error
+	SaveUser(user *entity.User) error
 }
 
 type Service struct {
-	repo Repository
+	repo         Repository
+	emailService *email.EmailService
 }
 
-func NewService(repo Repository) *Service {
+func NewService(repo Repository, emailService *email.EmailService) *Service {
 	return &Service{
-		repo: repo,
+		repo:         repo,
+		emailService: emailService,
 	}
 }
 
@@ -61,7 +67,7 @@ func (s *Service) UpdateUserService(user *entity.User) error {
 
 	user.Password = string(hashedPassword)
 
-	err = s.repo.UpdateUser(user)
+	err = s.repo.SaveUser(user)
 	if err != nil {
 		log.Error().Err(err).Msg(err.Error())
 		return err
@@ -94,4 +100,63 @@ func (s *Service) FindByIDService(id string) (*entity.User, error) {
 	}
 
 	return user, nil
+}
+
+func (s *Service) GenerateVerificationCode(user *entity.User) error {
+	user, err := s.repo.FindByEmail(user.Email)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return err
+	}
+
+	code := fmt.Sprintf("%06d", rand.Intn(1000000))
+	user.EmailVerificationCode = code
+	user.VerificationExpiry = time.Now().Add(1 * time.Hour)
+	user.VerificationAttemptsLeft = 3
+
+	if err := s.repo.SaveUser(user); err != nil {
+		return fmt.Errorf("failed to save verification code: %v", err)
+	}
+
+	err = s.emailService.SendVerificationEmail(user.Email, code)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return err
+	}
+
+	return nil
+}
+
+func (s *Service) ValidateVerificationCode(email, code string) error {
+	user, err := s.repo.FindByEmail(email)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return err
+	}
+
+	if time.Now().After(user.VerificationExpiry) {
+		return fmt.Errorf("verification code has expired")
+	}
+
+	if user.VerificationAttemptsLeft == 0 {
+		return fmt.Errorf("no attempts left")
+	}
+
+	if user.EmailVerificationCode != code {
+		user.VerificationAttemptsLeft--
+		if err := s.repo.SaveUser(user); err != nil {
+			return fmt.Errorf("failed to save verification attempts: %v", err)
+		}
+	}
+
+	user.EmailVerificationCode = ""
+	user.VerificationExpiry = time.Time{}
+	user.VerificationAttemptsLeft = 0
+	err = s.repo.SaveUser(user)
+	if err != nil {
+		log.Error().Err(err).Msg(err.Error())
+		return err
+	}
+
+	return nil
 }
