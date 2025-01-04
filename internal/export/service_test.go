@@ -44,25 +44,25 @@ func TestExportAllEvent(t *testing.T) {
 	t.Run("export all event successfully", func(t *testing.T) {
 		mockEventRepo.On("FindAll").Return(mockEvents, nil).Once()
 
-		svc := NewService(nil, mockEventRepo, mockBookingRepo)
-		err := svc.ExportAllEvent()
+		svc := NewService(mockEventRepo, mockBookingRepo)
+		eventsData, err := svc.ExportAllEvent()
 		if err != nil {
 			t.Errorf("expected error to be nil; got %v", err)
 		}
 
-		assert.Equal(t, len(mockEvents), len(mockEvents))
+		assert.Equal(t, len(mockEvents), len(eventsData))
 	})
 
 	t.Run("export all event failed", func(t *testing.T) {
 		mockEventRepo.On("FindAll").Return(nil, assert.AnError).Once()
 
-		svc := NewService(nil, mockEventRepo, mockBookingRepo)
-		err := svc.ExportAllEvent()
+		svc := NewService(mockEventRepo, mockBookingRepo)
+		_, err := svc.ExportAllEvent()
 		if err == nil {
 			t.Error("expected error; got nil")
 		}
 
-		assert.Equal(t, 0, len(mockEvents))
+		assert.Nil(t, nil)
 	})
 }
 
@@ -81,20 +81,24 @@ func TestExportAllBookingByUserID(t *testing.T) {
 	t.Run("export booking by id successfully", func(t *testing.T) {
 		mockBookingRepository.On("FindByUserID", mockBooking.UserID.String()).Return([]entity.Booking{mockBooking}, nil).Once()
 
-		svc := NewService(nil, mockEventRepository, mockBookingRepository)
-		err := svc.ExportAllBookingByUser(mockBooking.UserID.String())
+		svc := NewService(mockEventRepository, mockBookingRepository)
+		bookings, err := svc.ExportAllBookingByUser(mockBooking.UserID.String())
 		if err != nil {
 			t.Errorf("expected error to be nil; got %v", err)
 		}
+
+		assert.Equal(t, 1, len(bookings))
 	})
 
 	t.Run("export booking by id failed", func(t *testing.T) {
 		mockBookingRepository.On("FindByUserID", mockBooking.UserID.String()).Return(nil, assert.AnError).Once()
 
-		svc := NewService(nil, mockEventRepository, mockBookingRepository)
-		err := svc.ExportAllBookingByUser(mockBooking.UserID.String())
+		svc := NewService(mockEventRepository, mockBookingRepository)
+		_, err := svc.ExportAllBookingByUser(mockBooking.UserID.String())
 		if err == nil {
 			t.Error("expected error; got nil")
 		}
+
+		assert.Nil(t, err)
 	})
 }

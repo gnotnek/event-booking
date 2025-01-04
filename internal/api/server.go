@@ -72,8 +72,8 @@ func NewServer() *Server {
 	reviewHandler := review.NewHttpHandler(reviewSvc, validatorService)
 
 	// Export
-	exportSvc := export.NewService(rabbitCon, eventRepo, bookingRepo)
-	exportHandler := export.NewHttpHandler(exportSvc)
+	exportSvc := export.NewService(eventRepo, bookingRepo)
+	exportHandler := export.NewHttpHandler(exportSvc, rabbitCon)
 
 	app := fiber.New()
 
